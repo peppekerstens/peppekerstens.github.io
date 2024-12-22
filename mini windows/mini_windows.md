@@ -110,3 +110,5 @@ The above script does *not* remove all packages properly on a running machine.
 ## Advance
 
 WinGet enables you to use a declarative approach by setting up a [configuration](https://learn.microsoft.com/en-us/windows/package-manager/configuration/). 
+
+
