@@ -120,8 +120,6 @@ So I'm actually forcing myself to create this content using this laptop. No prom
 At this point, you might be banging your head on the desk, wondering why I don't simply install a Linux disribution on that thing. Well, I like to hurt myself, essentially. 
 
 
-\* a peek into my mind; I have been doubting on buying one of those N100 based hardware boxes with 2.5Gb NICs to replace my current Internet firewall. They are supposedly capable enough to run proxmox with a software based firewall on top of that. As I needed to clean up a room anyways because the floor is waiting for a replacement like...months, I stumbled upon some older laptops. I started wondering if one of these could be a cheap proof of concept, picked out the Dell Lattitude 3190 first. 
-
 {% assign date = '2020-04-13T10:20:00Z' %}
 
 - Original date - {{ date }}
