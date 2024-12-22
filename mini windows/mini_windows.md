@@ -111,4 +111,67 @@ The above script does *not* remove all packages properly on a running machine.
 
 WinGet enables you to use a declarative approach by setting up a [configuration](https://learn.microsoft.com/en-us/windows/package-manager/configuration/). 
 
+```YAML
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
+  resources:
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Clipchamp
+      directives:
+        description: Remove Clipchamp
+        allowPrerelease: true
+      settings:
+        id: Clipchamp.Clipchamp
+        source: winget
+        Ensure: Absent
+  configurationVersion: 0.2.0
+```
 
+
+```YAML
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
+  resources:
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: BingNews
+      directives:
+        description: Remove Bing News
+        allowPrerelease: true
+      settings:
+        id: Microsoft.BingNews
+        source: winget
+        Ensure: Absent
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: BingWeather
+      directives:
+        description: Remove Bing Weather
+        allowPrerelease: true
+      settings:
+        id: Microsoft.BingWeather
+        source: winget
+        Ensure: Absent
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: BingSearch
+      directives:
+        description: Remove Bing Search
+        allowPrerelease: true
+      settings:
+        id: Microsoft.BingSearch
+        source: winget
+        Ensure: Absent
+  configurationVersion: 0.2.0
+```
