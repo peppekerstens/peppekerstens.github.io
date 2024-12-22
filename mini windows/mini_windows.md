@@ -1,5 +1,6 @@
 ---
 title: Minimal Windows with WinGet
+parent: main
 ---
 
 # Minimalistic Windows - the journey to WinGet Desired State Configuration
