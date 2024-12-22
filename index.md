@@ -39,7 +39,9 @@ I was already aware of others efforting in reducing Windows program bloat. Durin
 
 ### Win11Debloat
 
-This is a PowerShell script which you can use in interactive mode or silent via the use of parameters. I have not tested its latest inception, but tried it in the past. It does a nice job of cleaning up Windows. The advantage over Tiny11Builder is that it is simpler; it does not require a complete reinstall of Windows.
+This is a PowerShell script which you can use in interactive mode or silent via the use of parameters. It should work on oth Windows 11 and Windows 10. If you are someone who just wants stuff removed and don't know or care about its inner workings, i'd say look no further and use Win11Debloat.
+
+I have not tested its latest inception (I probably should), but tried it in the past. A quick investigation of [current version](https://github.com/Raphire/Win11Debloat/blob/c25dcb298bf0d765693fa5103103006bdf558668/Win11Debloat.ps1) shows nicely created functions opting for severall de-install types, depending on OS and scenario. It also seems to provide a GUI wrapper, making life even simpler. The advantage over Tiny11Builder is that it is simpler and faster to execute; it does not require a complete reinstall of Windows.
 
 https://github.com/Raphire/Win11Debloat
 
@@ -55,9 +57,11 @@ With a near 100% certainty, there may be other solutions available. I just don't
 
 ## Simplify 
 
-Before someone gets cross at me; both solutions seem to have been maintained quite well do a nice job. The hard work most times is finding what can- and cannot be disabled. Whatever I am publishing here; it is build upon that hard work and I fully credit whomever has done so. 
+Before someone gets cross at me; both solutions seem to have been maintained quite well and do a nice job. The hard work, most times, is finding what can- and cannot be disabled. Whatever I am publishing here; it is build upon that hard work and I fully credit whomever has done so. 
 
 My itch with both solutions ended up being that they are quite bloated themselves and just remove stuff instead of ensuring some stuff only remains. The bloated part I can understand; in order to ensure proper behavior in most scenario's and understandable responses for the mass, a lot of whistles and bells must be added.
+
+My first effort was to simplify. I used Tiny11Builder as a source for items to remove. 
 
 ``` PowerShell
 #Requires -RunAsAdministrator
