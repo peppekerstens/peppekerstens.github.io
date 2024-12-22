@@ -1,5 +1,6 @@
 ---
 title: Lightweight development
+parent: main
 ---
 
 ## Light weight development
