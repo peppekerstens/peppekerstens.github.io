@@ -55,18 +55,26 @@ My itch with both solutions ended up being that they are quite bloated themselve
 
 My first effort was to simplify. For the script below I used Tiny11Builder as a source for items to remove. 
 
-``` PowerShell
+```PowerShell
 #Requires -RunAsAdministrator
 
-$winget = Get-Module -Name Microsoft.WinGet.Client -ListAvailable
-If ($null -eq $winget){
-    Install-Module -Name Microsoft.WinGet.Client
-}
-Import-Module -Name Microsoft.WinGet.Client
-#https://powershellisfun.com/2024/11/28/using-the-powershell-winget-module/
+function install-winget{
+  Try{
+    Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction Stop
+  }Catch{
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+  }
 
-#Check Winget
-Repair-WinGetPackageManager -Latest
+  #https://powershellisfun.com/2024/11/28/using-the-powershell-winget-module/
+  $winget = Get-Module -Name Microsoft.WinGet.Client -ListAvailable
+  If ($null -eq $winget){
+      Install-Module -Name Microsoft.WinGet.Client -Force
+  }
+  Import-Module -Name Microsoft.WinGet.Client
+
+  #Check Winget
+  Repair-WinGetPackageManager -Latest
+}
 
 # Windows stuff
 $packagePrefixes  = @('Clipchamp.Clipchamp', 'Microsoft.BingNews', 'Microsoft.BingWeather', 'Microsoft.GamingApp', 'Microsoft.GetHelp', 'Microsoft.Getstarted', 'Microsoft.MicrosoftOfficeHub', 'Microsoft.MicrosoftSolitaireCollection', 'Microsoft.People', 'Microsoft.PowerAutomateDesktop', 'Microsoft.Todos', 'Microsoft.WindowsAlarms', 'microsoft.windowscommunicationsapps', 'Microsoft.WindowsFeedbackHub', 'Microsoft.WindowsMaps', 'Microsoft.WindowsSoundRecorder', 'Microsoft.Xbox.TCUI', 'Microsoft.XboxGamingOverlay', 'Microsoft.XboxGameOverlay', 'Microsoft.XboxSpeechToTextOverlay', 'Microsoft.YourPhone', 'Microsoft.ZuneMusic', 'Microsoft.ZuneVideo', 'MicrosoftCorporationII.MicrosoftFamily', 'MicrosoftCorporationII.QuickAssist', 'MicrosoftTeams', 'Microsoft.549981C3F5F10')
@@ -101,8 +109,6 @@ $packagePrefixes | Foreach-Object {
     $packagesToRemove += $installedPackages.where{$_.Id -like "*$($currentPackage)*"}
 }
 $packagesToRemove | Foreach-Object {Uninstall-WinGetPackage -Name $_.Name -Force}
-
-
 ```
 
 The above script does *not* remove all packages properly on a running machine. 
@@ -111,29 +117,32 @@ The above script does *not* remove all packages properly on a running machine.
 
 WinGet enables you to use a declarative approach by setting up a [configuration](https://learn.microsoft.com/en-us/windows/package-manager/configuration/). 
 
-```YAML
-# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
-properties:
-  assertions:
-    - resource: Microsoft.Windows.Developer/OsVersion
-      directives:
-        description: Verify min OS version requirement
-        allowPrerelease: true
-      settings:
-        MinVersion: '10.0.22000'
-  resources:
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Clipchamp
-      directives:
-        description: Remove Clipchamp
-        allowPrerelease: true
-      settings:
-        id: Clipchamp.Clipchamp
-        source: winget
-        Ensure: Absent
-  configurationVersion: 0.2.0
+
+Assuming a clean Windows installation, some requirements must be met to ensure proper execution of winget.
+
+```PowerShell
+#Requires -RunAsAdministrator
+
+function install-winget{
+  Try{
+    Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction Stop
+  }Catch{
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+  }
+
+  #https://powershellisfun.com/2024/11/28/using-the-powershell-winget-module/
+  $winget = Get-Module -Name Microsoft.WinGet.Client -ListAvailable
+  If ($null -eq $winget){
+      Install-Module -Name Microsoft.WinGet.Client -Force
+  }
+  Import-Module -Name Microsoft.WinGet.Client
+
+  #Check Winget
+  Repair-WinGetPackageManager -Latest
+}
 ```
 
+Next, we need to create at least one winget configuration file. Below is an example on how this should look for the Bing application componenents
 
 ```YAML
 # yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
@@ -171,6 +180,104 @@ properties:
         allowPrerelease: true
       settings:
         id: Microsoft.BingSearch
+        source: winget
+        Ensure: Absent
+  configurationVersion: 0.2.0
+```
+
+We could convert this by hand obviously. But that is boring work and not cool. Second option is to use some form of string manipulation to replace certain elements. Below is a gist of code on this could be done, not a complete working solution.
+
+```Powershell
+#https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_quoting_rules?view=powershell-7.4#here-strings
+$string = 
+@'
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: [ID]
+      directives:
+        description: [DESCRIPTION]
+        allowPrerelease: true
+      settings:
+        id: [ID]
+        source: winget
+        Ensure: Absent
+'@
+
+$packagePrefixes = @('Microsoft.BingNews', 'Microsoft.BingWeather', 'Microsoft.BingSearch')
+$packagePrefixes | foreach-object {
+  $description = "Removing $($_)"
+  $part = $string -replace '\[ID\]',$_
+  $part = $part -replace '\[DESCRIPTION\]',$description
+  $part
+}
+```
+
+Still not cool. String manipulation is error prone. Only revert to it when all else fails. PowerShell is an object oriented language. Use its power.
+
+```PowerShell
+#https://github.com/cloudbase/powershell-yaml
+$yamlmodule = Get-Module -Name powershell-yaml -ListAvailable
+If ($null -eq $yamlmodule){
+    Install-Module -Name powershell-yaml -Force
+}
+Import-Module -Name powershell-yaml
+
+#create a resource singleton
+$resource = @{
+    "resource" = "Microsoft.WinGet.DSC/WinGetPackage"
+    "id" = "BingNews"
+    "directives" = @{
+      "description" = "Remove Microsoft.BingNews"
+      "allowPrerelease" = "true"
+    }
+    "settings" = @{
+        id: Microsoft.BingNews
+        source: winget
+        Ensure: Absent    
+    "nested" = @{
+        "array" = @("this", "is", "an", "array")
+    }
+    
+}
+
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: BingNews
+      directives:
+        description: Remove Bing News
+        allowPrerelease: true
+      settings:
+        id: Microsoft.BingNews
+        source: winget
+        Ensure: Absent
+
+@{"resource"="Microsoft.Windows.Developer/OsVersion"; "anArray"=@(1,2,3); "nested"=@{"array"=@("this", "is", "an", "array")}}
+
+
+```
+
+e Convererting 
+
+
+
+
+
+```YAML
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
+  resources:
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Clipchamp
+      directives:
+        description: Remove Clipchamp
+        allowPrerelease: true
+      settings:
+        id: Clipchamp.Clipchamp
         source: winget
         Ensure: Absent
   configurationVersion: 0.2.0
