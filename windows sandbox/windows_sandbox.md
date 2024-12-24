@@ -118,4 +118,4 @@ properties:
 
 I was so focussed on getting it working that only when it finally did, it daunted on me that the Sandbox environment apparently already is a minimal Windows environment. Nearly nothing is present.
 
-![Windows Sandbox Installed Apps](./img/Screenshot 2024-12-24 142139.png)
+![Windows Sandbox Installed Apps]("./img/Screenshot 2024-12-24 142139.png")
