@@ -116,6 +116,22 @@ properties:
   configurationVersion: 0.2.0
 ```
 
-I was so focussed on getting it working that only when it finally did, it daunted on me that the Sandbox environment apparently already is a minimal Windows environment. Nearly nothing is present.
+I was so focussed on getting it working that only when it finally did, it daunted on me that the Sandbox environment apparently already is a minimal Windows environment. Nearly nothing is present, so neither is all the bloatware. 
 
 ![Windows Sandbox Installed Apps](./img/sandboxInstalledApps.png)
+
+So Windows Sandbox is not the way to go when an OOBE Windows environment is expected/required. Knowing this limitation, I did not invest in further tests.
+
+## Conclusion
+
+The above has only been a brief and short test of Windows Sandbox. It will certainly do a fine job in many scenarios. The enironment will certainly be a better fit for testing anything that is based on idempotent code (like DSC). Just not the usecase I was testing it for I guess.
+
+Pros:
+
+* Simple setup
+* Few resources
+
+Cons:
+
+* Not OOBE experience
+* Fixed on host system OS
