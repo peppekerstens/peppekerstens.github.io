@@ -213,7 +213,7 @@ Hmmm strange. Seems like something is wrong with the ovs-docker command. Let's t
 
 https://docs.openvswitch.org/en/latest/intro/install/distributions/#debian-ubuntu
 
-First lets fix apt, because the install_docker_ovs.sh script seeminlge has messed things up
+First lets fix apt, because the install_docker_ovs.sh script seems to have messed things up
 
 ```sh
 peppekerstens@pk-private:~/p4-test$ sudo apt-get update
@@ -286,7 +286,8 @@ Error response from daemon: OCI runtime exec failed: exec failed: unable to star
 Error response from daemon: OCI runtime exec failed: exec failed: unable to start container process: exec: "ip": executable file not found in $PATH: unknown
 Booting switches, please wait ~1 minute for switches to load
 ```
-As it turns out, all commands being used to configure the network interfaces within Ubuntu are obsolete. 
+
+The commands being used to configure the network interfaces within Ubuntu do not seem to be present in the used Docker distro.
 
 ## Ubuntu, what the hell?
 
@@ -312,7 +313,39 @@ Even so, it very much seems like that OVS for Docker is more or less an obsolute
 
 *\ As I am quite aware that the Linux world mostly consists of true believers, take this statement for what it is worth; a Windows guy with little up-to-date networking knowledge. I certainly do not want to get flamed into the universe for daring to make such an blasfumous statement :^
 
+## Let's try Docker network
 
+There seem to be a few requirements imposed on SONiC. In [the article of Adam Dunstan](https://medium.com/sonic-nos/creating-a-sonic-nos-virtual-lab-5a9ec431e0d0), he states:
+
+* SONiC uses eth0 as the management interface
+* Additional interfaces are mapped as switch interfaces
+* The ordering of interfaces is important (for automatic configuring)
+* The order of interfaces is determined by the pci id
+
+The [SONiC github wiki example](https://github.com/sonic-net/SONiC/wiki/SONiC-P4-Software-Switch) is simpler and only needs one switch interface per SONiC instance. This is the topology:
+
+`host1 (Ubuntu, 192.168.1.2/24) <--> switch1 (SONiC) <--> switch2 (SONiC) <--> host2 (Ubuntu, 192.168.2.2/24)`
+
+In order to make this managable from Docker this would extrapolate to:
+
+`host1 (Ubuntu, 192.168.1.2/24) <--> switch1 (SONiC) <--> switch2 (SONiC) <--> host2 (Ubuntu, 192.168.2.2/24)`
+
+
+So lets create a few Docker networks, representing the wiki example
+
+docker network create --driver=none sonic
+docker network create --driver=bridge host1 --subnet=192.168.1.2/24
+docker network create --driver=bridge host2 --subnet=192.168.2.2/24
+
+
+The default login to SoNIC admin/YourPaSsWoRd
+
+
+
+eth0 — management interface — not mapped — mgtbr0
+eth1 — first switch interface — SoNIC Ethernet0 — vmbr0
+eth2 — second switch interface — SoNIC Ethernet4 — udp-ptp1
+eth3 — third switch interace — SoNIC Ethernet8 — udp-ptp2
 
 https://www.server-world.info/en/note?os=Ubuntu_20.04&p=docker&f=9
 
