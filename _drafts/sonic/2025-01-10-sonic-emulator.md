@@ -19,6 +19,12 @@ Even though much of the management interfacing has changed, core technology comp
 
 Even back then, I left most of the network configuration details to others and had already started to focus more on automated deployments. Current situation does not differ that much; I believe to have some very proficient colleagues capable of configuring the needed networking just fine. That being said, the company policy to use SONiC as default switch OS is new. So the kremlins in my head are screaming that I needed to brush-up on networking technology and configuration proficiency fast...
 
+## Hindsight me
+
+Looking back at this...adventure, I should have known that this was going to be a full fledged Alice in Wonderland experience. Trying out a new networking technology on a virtual environment build upon an OS most of which my knowledge is limited and based on an outdated instruction...what could go wrong?!? Oh wait...and did this within WSL as well..duh!
+
+As I already made up my mind beforehand to hang on and at least seriously try to succeed, I struggled along. But it really felt like being stuck in the dirt at times, only sinking down deeper with every move I made.
+
 ## SONiC emulator
 
 The get to know any new system, it is quite common to start with an emulator. Especially concerning networking devices as their investment can be severe and need to endure.
@@ -259,7 +265,61 @@ sudo curl -L https://raw.githubusercontent.com/openvswitch/ovs/refs/heads/main/u
 
 lets retry...
 
+```sh
+./start.sh
+3feb6b95ba86fd7143430de0d08adae28dd9da820b964fc1f98143261670372a
+5a09183475f8bd0af9087980381481f19c20aa09ddba39c2dd2f1f32b7f8a5a2
+36030dab19b06098b46f106a68b45ae6ec7576e5761fdf16a882d9a3a79de4cb
+9e2c0a51c3469b8e0fa9760e1cae7614b1b061114bc292d4124552bc44a70c26
+ovs-vsctl: cannot create a bridge named switch1_switch2 because a bridge named switch1_switch2 already exists
+ovs-docker: Port already attached for CONTAINER=switch1 and INTERFACE=sw_port0
+ovs-docker: Port already attached for CONTAINER=switch2 and INTERFACE=sw_port0
+ovs-vsctl: cannot create a bridge named host1_switch1 because a bridge named host1_switch1 already exists
+ovs-docker: Port already attached for CONTAINER=switch1 and INTERFACE=sw_port1
+ovs-docker: Port already attached for CONTAINER=host1 and INTERFACE=eth1
+ovs-vsctl: cannot create a bridge named host2_switch2 because a bridge named host2_switch2 already exists
+ovs-docker: Port already attached for CONTAINER=switch2 and INTERFACE=sw_port1
+ovs-docker: Port already attached for CONTAINER=host2 and INTERFACE=eth1
+Error response from daemon: OCI runtime exec failed: exec failed: unable to start container process: exec: "ifconfig": executable file not found in $PATH: unknown
+Error response from daemon: OCI runtime exec failed: exec failed: unable to start container process: exec: "ip": executable file not found in $PATH: unknown
+Error response from daemon: OCI runtime exec failed: exec failed: unable to start container process: exec: "ifconfig": executable file not found in $PATH: unknown
+Error response from daemon: OCI runtime exec failed: exec failed: unable to start container process: exec: "ip": executable file not found in $PATH: unknown
+Booting switches, please wait ~1 minute for switches to load
+```
+As it turns out, all commands being used to configure the network interfaces within Ubuntu are obsolete. 
 
+## Ubuntu, what the hell?
+
+By both checking the [Ubuntu website](https://documentation.ubuntu.com/server/explanation/networking/configuring-networks) and my local instance of Ubuntu, commands should still be present with the distro. 
+
+I gather that the default Ubuntu Docker image is some sort of minimalistic one, which makes sense as it is to behave like a container OS. The [Ubuntu Docker information](https://hub.docker.com/_/ubuntu) states that there is a way to undo all this:
+
+*Starting from Ubuntu 24.10 "Oracular Oriole"⁠, the unminimize command will no longer be shipped by default on minimal images. It has now been moved to a dedicated package which can be installed via apt-get install -y unminimize.*
+
+Problem is, current configuration is such that the defined network is isolated. So any apt-get command fails. 
+
+Which brings me to next question.
+
+## Why OpenVSwitch?
+
+At time of this writing, OpenVSwitch [is still being updated](https://mail.openvswitch.org/pipermail/ovs-announce/2024-November/000360.html) and [conferences are still being held](https://www.openvswitch.org/support/ovscon2024/) 
+
+Even so, it very much seems like that OVS for Docker is more or less an obsolute solution*. My conclusion is based upon I few findings.
+
+* Most published articles which combine OVS with Docker I found are old. For instance https://medium.com/@joatmon08/making-it-easier-docker-containers-on-open-vswitch-4ed757619af9 dates from 2016. The wike article and scenario we are trying to recreate here dates from 2017.
+* The official Docker ovs plugin has not been updated for 8 years (do we even need it?): https://hubgw.docker.com/r/gophernet/ovs-plugin
+* At current, the Linux kernel networking stack seems to be mostly on par with what OVS can do, eliminiating the need of a service running on top of it, like OVS: https://forum.proxmox.com/threads/proxmox-sdn-openvswitch-and-linux-bridges.134698/
+
+*\ As I am quite aware that the Linux world mostly consists of true believers, take this statement for what it is worth; a Windows guy with little up-to-date networking knowledge. I certainly do not want to get flamed into the universe for daring to make such an blasfumous statement :^
+
+
+
+https://www.server-world.info/en/note?os=Ubuntu_20.04&p=docker&f=9
+
+
+
+
+So during my adventure 
 
 \* One reason is that I really dislike Medium who seems to be more interested in logging your online behavior and monotizing on information than anything else. Everytime I am forced to accept their cookie policy i get a clickbait feeling. 
 
