@@ -4,9 +4,8 @@ layout: home
 author_profile: true
 ---
 
-Here you may find ramblings of any and all things that keep me awake at night or busy at day. Good or bad, you decide. Chances are this site does only get updated sporadically because like most thing I start with the best intentions intending to do things differently this time around only to end up loosing myself in a rabit hole details and astrays.
+Here you will find ramblings of any and all things that keep me awake at night or busy at day. Good or bad, you decide. There is no concept, no promise, no specific goal other then me trying to write stuff.
 
-There is no concept, no promise, no specific goal other then me trying to write things down and publish. That being said, me being an random IT guy, you may expect technical stuff. So let's dig in right there.
+Chances are this site gets updated sporadically because, like with most things, I start with the best intentions only to end up loosing myself in a rabit hole of details and astrays.
 
-
-
+That being said, me being an random IT guy, you may expect mostly technical stuff.
