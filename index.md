@@ -1,5 +1,7 @@
 ---
 title: main
+layout: home
+author_profile: true
 ---
 
 # Ramblings and tidbits of me 
