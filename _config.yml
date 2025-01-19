@@ -115,7 +115,7 @@ analytics:
 author:
   name             : "Peppe Kerstens"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
+  bio              : "Just another IT guy, husband, dad, feeling the aging"
   location         : "Netherlands"
   email            :
   links:
@@ -318,7 +318,7 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       read_time: true
       comments: # true
       share: true
