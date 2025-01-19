@@ -1,9 +1,6 @@
 ---
 title: Windows Sandbox Configuration
-parent: main
 ---
-
-# Windows Sandbox Configuration
 
 A recent option to create a temporary test machine is Windows Sandbox. This is a virtual machine instance based upon your current Windows installation. It requires less resources then a normal VM, yet exposes a full Windows installation. 
 
