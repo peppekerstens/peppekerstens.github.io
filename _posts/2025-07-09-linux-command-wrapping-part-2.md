@@ -35,7 +35,7 @@ The [Windows Subsystem for Linux](https://learn.microsoft.com/windows/wsl/) (WSL
 
 When you have installed Docker for instance, you may find that WSL already is present on your system. Then you just need to add Ubuntu via de command-line like this:
 
-```text
+```cmd
 wsl --install ubuntu
 ```
 
@@ -43,7 +43,7 @@ You will be asked to provide credetials to logon into Ubuntu.
 
 You can set the Ubuntu system as the default one like this:
 
-```text
+```cmd
 wsl --list
 Windows Subsystem for Linux Distributions:
 docker-desktop (Default)
@@ -59,7 +59,7 @@ docker-desktop
 
 If Ubuntu already is on your system, you can update in 2 ways. Either via Linux commands, shown in next section, or via the WSL command like this:
 
-```text
+```cmd
 wsl --update ubuntu
 ```
 
@@ -67,7 +67,7 @@ Once everything is installed, you can either call/activate a session via just ca
 
 The version I am working on:
 
-```text
+```bash
 Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64)
 ```
 
@@ -75,7 +75,7 @@ Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64
 
 Installing PowerShell can be done in a number of ways. To best working manual option for me was using [the script provided here](https://learn.microsoft.com/powershell/scripting/install/install-ubuntu?view=powershell-7.5). It also updates the system. Below is just a copy of that script for your convienience.
 
-```tekst
+```bash
 ###################################
 # Prerequisites
 
@@ -260,7 +260,7 @@ In the below section, whenever something has gone wrong, I killed that session a
 
 Checking out Get-Drive.ps:
 
-```Powershell
+```powershell
 cat .\Storage.Linux\Functions\get-disk.ps1 
 
 Function Get-Disk {
@@ -439,7 +439,7 @@ clean
 
 First of all, severall parameters are being referenced by types which simply do not exist under Linux. For instance:
 
-```Powershell
+```powershell
     [Parameter(ParameterSetName='ByPartition', ValueFromPipeline=$true)]
     [ValidateNotNull()]
     [PSTypeName('Microsoft.Management.Infrastructure.CimInstance#MSFT_Partition')]
@@ -453,7 +453,7 @@ Secondly and foremost, the proxy function seems to crash. When creating the func
 
 Simplest way is to load it into session
 
-```Powershell
+```powershell
 . ./get-disk.ps1
 get-disk
 ```
@@ -466,7 +466,7 @@ I tried this on the other PowerShell versions available on my system, but they a
 
 Now, this might be me just having bad luck. So I checked my [old proxy function for Out-Gridview](https://gist.github.com/peppekerstens/b6553910fa316cfe9bdab2d73a3476a5).
 
-```Powershell
+```powershell
 . .\Out-Gridview.ps1
 out-gridview
 InvalidOperation: C:\Users\peppe\OneDrive\GitHub\Storage.Linux\Helpers\Out-Gridview.ps1:45
@@ -480,13 +480,13 @@ ok....at least a normal error. Apparently, the Out-Gridview cmdlat has changed i
 
 Let's re-create the proxy function for Out-GridView using the helper funcions as stated earlier:
 
-```PowerShell
+```powershell
 Initialize-Module -name Microsoft.PowerShell.Utility .\PowerShell.Utility.Linux
 ```
 
 Strangely enough, the [Microsoft.PowerShell.Commands.OutputModeOption] type is there as well:
 
-```PowerShell
+```powershell
 Function Out-GridView {
 
 [CmdletBinding(DefaultParameterSetName='PassThru', HelpUri='https://go.microsoft.com/fwlink/?LinkID=2109378')]
@@ -514,7 +514,7 @@ param(
 
 Let's test out this one then:
 
-```PowerShell
+```powershell
 cd ./PowerShell.Utility.Linux
 . ./Out-Gridview.ps1
 Out-GridView
@@ -529,7 +529,7 @@ Function        Out-GridView
 
 Wait, what?!? No error....? Ok, the plot thickens! To confirm I started a new PowerShell session.
 
-```PowerShell
+```powershell
 # in-place loading of the old proxy code
 cd .\helpers\
 . .\Out-GridView.ps1
@@ -555,7 +555,7 @@ Ok...strange. So when does the error disappear then? Again, new PS session:
 
 To confirm I started a new PowerShell session.
 
-```PowerShell
+```powershell
 get-command out-gridview
 
 CommandType     Name                                               Version    Source
