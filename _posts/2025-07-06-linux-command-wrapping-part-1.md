@@ -25,11 +25,13 @@ As [the Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/w
 
 A complete list and further detailing can be found in the repos fr each module as stated under [peer modules](#peer-modules)
 
-### Work towards cmdlet parity
+### Work towards cmdlet parity and multi-platform
 
 Aside from that, Evgenij Smirnov started creating a module build on script with 'alike' command names, adding the 'Linux' prenoun in front of a known noun. From a 'make it small, keep it simple' development perspective, this is perfectly fine and a good approach. But at end, to get adoption and traction, the original cmdlet call should 'just work' the same as it does on Windows. Or as close as it can be.
 
 This can be achieved by using the proxy functions within PowerShell as [being explained by Shay Levy here](https://devblogs.microsoft.com/scripting/proxy-functions-spice-up-your-powershell-core-cmdlets/). I already created a proxy function for [Out-Gridvew a few years ago](https://gist.github.com/peppekerstens/b6553910fa316cfe9bdab2d73a3476a5).
+
+Although it may seem silly to proxy a function on a system where that function does not exist, but in an ideal world our modules should end-up being multi-platform supported.
 
 ### Use frameworks
 
@@ -64,6 +66,19 @@ Although I do have nothing against contributing, I believe this could be approac
 |Sundry|Out-Printer| Microsoft.PowerShell.Utility| PowerShell.Utility.Linux|
 |Sundry|Show-Command|Microsoft.PowerShell.Utility|PowerShell.Utility.Linux|
 
+Furthermore, I believe that the above is missing cmdlets which are vital for day to day management of any system; patches and updates. And altough the basic command is quite simple on a Linix box, it would be a plus if the result is useable in PowerShell.
+
+|Region | Noun | Windows module | Linux module |
+|--|--|--|--|
+|Update|\*|PSWindowsUpdate|Update.Linux|
+
+Of lesser importance but still quite; package management. The downside is that PowerShell itself seems to be in an fluid state on this. I mean, we have packagemanagement, its succesor PSresource. And then there is winget. We won't touch WinGet as this is a command-line tool by itself with having severall PowerShell modules as being wrappers. But it might be smart to interogate those modules to check what others came up with.
+
+|Region | Noun | Windows module | Linux module |
+|--|--|--|--|
+|PackageManagement|\*|PackageManagement|PackageManagement.Linux|
+|PSResourceGet|\*|Microsoft.PowerShell.PSResourceGet|PowerShell.PSResourceGet.Linux|
+
 ## The low
 
 Do not expect a complete finished series here ending in a 'command complete'  Linux ennvironment; it most likely will not. First and foremost this is a daunting task and lots of work. Too much to do it alone. Hence Evgenij Smirnov's call to action to contribute. I am doing this in my spare time, which is scarce these days.
@@ -72,4 +87,8 @@ I also tend not to follow through on stuff when there is no deadline or someone 
 
 As already noted, Linux still mostly seem to be 'undiscovered country'. There can be many reasons for this but at end, I can only conclude that the pickup is lacking. The same goes for the Crescendo module. With only 10 contributers and the last update about a year ago, there does not seem to be much going on.
 
-So the question is; is anyone actually interested getting PowerShell stuff working on Linux? 
+So the question is; is anyone actually interested getting PowerShell stuff working on Linux?
+
+## Next
+
+Next post will detail more on prepping for the approach set out above.
