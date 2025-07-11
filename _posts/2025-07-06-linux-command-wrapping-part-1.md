@@ -1,5 +1,5 @@
 ---
-title: Linux Command Wrapping - part 1
+title: Linux Command Wrapping Part 1
 toc: true
 ---
 

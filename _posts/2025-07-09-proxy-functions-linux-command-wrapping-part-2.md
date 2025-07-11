@@ -1,11 +1,11 @@
 ---
-title: Linux Command Wrapping - part 2
+title: Proxy Functions - Linux Command Wrapping Part 2
 toc: true
 ---
 
-## The joke is on me
+This is a follow up article in a series on command wrapping. Proxy functions are failing on me, forcing to re-visit my approach.
 
-My original detailled approach plan was:
+My original more detailled approach plan was:
 
 1. Extract all cmdlets from original module and use them as input for the Linux module
 2. Create empty proxy functions for all cmdlets
@@ -13,7 +13,7 @@ My original detailled approach plan was:
 4. Create PowerShell equivalents of Linux command-line tools. If possible and of added value, using Crescendo.
 5. Merging the PowerShell equivalents into the previous created proxy function.
 
-...or so I thought. Well, this plan went sour very fast. :|
+...or so I thought. Well, this plan went sour very fast.
 
 Naturally, I played around with some code a bit before diving in. At this point, I am tempted to say that the whole proxy functionality within PowerShell is FUBAR. Besides that, cmdlets build upon .Net functionality which simply is not present in Linux, which is the whole reason why they are not there Linux in the first place I guess
 
