@@ -207,7 +207,7 @@ After fiddling around with the config file for a while, I ended up with this:
 
 This can be improved upon of course, but for now it does the job.
 
-## Crescendo caveats
+## Caveats
 
 During my Crescendo adventures, I found a few caveats. Let me stress that these might just be me knowing too little about Crescendo and it's features, does and dont's.
 
@@ -293,8 +293,10 @@ I changed it to this:
 
 So I geuss you should be strict on obying the output stream order when choosing the 'Inline' HandlerType.
 
-## Next up
+## Conclusion and next up
 
 Getting my first command line wrapped by using Crescendo actually took me quite a while longer than I expected. Mainly because there is an investment to be done to figure out its behavior (and quirks?).
+
+At this point, I'm on the fence on wether Crescendo will actually accelerate the command wrapping effort. For now, i'll keep using it as long as not to many other quirks pop-up.
 
 At this point, I have not even started on the Get-Disk function. That's fine. I'll pick up on this in a next part somewhere...
