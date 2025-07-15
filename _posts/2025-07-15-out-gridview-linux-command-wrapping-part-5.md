@@ -1,5 +1,5 @@
 ---
-title: Out-Gridview - Linux Command Wrapping Part 4
+title: Out-Gridview - Linux Command Wrapping Part 5
 toc: true
 ---
 
@@ -127,4 +127,4 @@ I toped it off with having CoPilot writing Pester tests. Be aware that you'll ne
 
 You can find the result here: https://github.com/peppekerstens/PowerShell.Utility.Linux/tree/main/PowerShell.Utility.Linux 
 
-Be mindfull that at this point in time, the module is work in progress and only the Out-GridView function is finished.
+Be mindfull that at this point in time, the module is work-in-progress and only the Out-GridView function is finished.
