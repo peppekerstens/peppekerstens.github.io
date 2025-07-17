@@ -9,7 +9,7 @@ This is a follow up article in a series on command wrapping. This time, i'll try
 
 In [an earlier post](https://peppekerstens.github.io/proxy-functions-linux-command-wrapping-part-3/), I checked my existing [proxy function](https://gist.github.com/peppekerstens/b6553910fa316cfe9bdab2d73a3476a5) for Out-Gridview.
 
-As that point, two issues surfaced:
+At that point, two issues surfaced:
 
 1. The [Microsoft.PowerShell.Commands.OutputModeOption] error
 2. The .out-gridview.settings error, see below
