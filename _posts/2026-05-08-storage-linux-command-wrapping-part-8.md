@@ -1,5 +1,5 @@
 ---
-title: Storage - Linux Command Wrapping Part 7
+title: Storage - Linux Command Wrapping Part 8
 toc: true
 ---
 
@@ -136,7 +136,7 @@ That comes to 503 tests, all passing on WSL2 Ubuntu 24.04.2 with PowerShell 7.5.
 
 ## Next up
 
-With `Storage.Linux` in a solid state, the next module is `PowerShell.Management.Linux`: service management, computer info and related cmdlets. That story is in part 8.
+With `Storage.Linux` in a solid state, the next module is `PowerShell.Management.Linux`: service management, computer info and related cmdlets. That story is in part 9.
 
 ---
 
@@ -156,7 +156,7 @@ Following a new requirement across the whole project, `Storage.Linux` gained an 
 
 Each script works identically on Windows and Linux. An `Examples.Tests.ps1` Pester test file accompanies them — 31 tests total. File-existence and syntax checks run on Windows; live execution tests run on Linux only (guarded with `-Skip:(-not $IsLinux)`).
 
-Writing cross-platform Pester tests revealed a platform version mismatch: Windows had Pester **5.3.3** and WSL2 had Pester **5.7.1**. Both are v5, but `$PSScriptRoot` behaves differently at discovery time in 5.3.x — it can be `$null` when the test file is passed via `PesterConfiguration`. The fix is `BeforeDiscovery`, introduced in Pester 5.2, which runs before test discovery and is the correct place to set data that feeds `-ForEach` on `Describe` blocks. More on this in part 9.
+Writing cross-platform Pester tests revealed a platform version mismatch: Windows had Pester **5.3.3** and WSL2 had Pester **5.7.1**. Both are v5, but `$PSScriptRoot` behaves differently at discovery time in 5.3.x — it can be `$null` when the test file is passed via `PesterConfiguration`. The fix is `BeforeDiscovery`, introduced in Pester 5.2, which runs before test discovery and is the correct place to set data that feeds `-ForEach` on `Describe` blocks. More on this in part 10.
 
 ### v0.5.0 — Linux-only module guard
 

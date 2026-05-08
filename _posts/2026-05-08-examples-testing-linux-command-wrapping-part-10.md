@@ -1,9 +1,9 @@
 ---
-title: Examples, Testing Across Platforms, and Linux-Only Modules - Linux Command Wrapping Part 9
+title: Examples, Testing Across Platforms, and Linux-Only Modules - Linux Command Wrapping Part 10
 toc: true
 ---
 
-Parts 7 and 8 covered the initial implementation of `Storage.Linux` and `PowerShell.Management.Linux`. This part steps back from adding new cmdlets and focuses on three things that came out of revisiting `Storage.Linux`: building a reusable example script pattern, dealing with Pester version differences between Windows and WSL2, and a design decision about whether a Linux wrapping module should even load on Windows.
+Parts 8 and 9 covered the initial implementation of `Storage.Linux` and `PowerShell.Management.Linux`. This part steps back from adding new cmdlets and focuses on three things that came out of revisiting `Storage.Linux`: building a reusable example script pattern, dealing with Pester version differences between Windows and WSL2, and a design decision about whether a Linux wrapping module should even load on Windows.
 
 ## Command wrapping series
 
@@ -185,4 +185,4 @@ The patterns established here apply to all future modules in this series:
 
 ## Next up
 
-With `Storage.Linux` polished and documented, the queue has `NetTCPIP.Linux` waiting for its first WSL2 test run, and `PowerShell.Management.Linux`, `NetTCPIP.Linux`, and `PowerShell.Utility.Linux` all still need their `Examples\` folders. The approach is now standardised — part 10 will put it into practice.
+With `Storage.Linux` polished and documented, the queue has `NetTCPIP.Linux` waiting for its first WSL2 test run, and `PowerShell.Management.Linux`, `NetTCPIP.Linux`, and `PowerShell.Utility.Linux` all still need their `Examples\` folders. The approach is now standardised — part 11 will put it into practice.

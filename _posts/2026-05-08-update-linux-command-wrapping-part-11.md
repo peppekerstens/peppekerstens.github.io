@@ -1,9 +1,9 @@
 ---
-title: Update.Linux - Wrapping apt as a PSWindowsUpdate Peer - Linux Command Wrapping Part 10
+title: Update.Linux - Wrapping apt as a PSWindowsUpdate Peer - Linux Command Wrapping Part 11
 toc: true
 ---
 
-Part 9 established the patterns that every module in this series follows: examples first, `BeforeDiscovery` for cross-platform test files, and a Linux-only guard in `.psm1`. Part 10 puts those patterns into practice with a new module: `Update.Linux`, a peer for the **PSWindowsUpdate** community module.
+Part 10 established the patterns that every module in this series follows: examples first, `BeforeDiscovery` for cross-platform test files, and a Linux-only guard in `.psm1`. Part 11 puts those patterns into practice with a new module: `Update.Linux`, a peer for the **PSWindowsUpdate** community module.
 
 ## Command wrapping series
 

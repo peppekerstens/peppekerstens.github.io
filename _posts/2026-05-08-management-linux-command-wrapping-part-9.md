@@ -1,5 +1,5 @@
 ---
-title: Management - Linux Command Wrapping Part 8
+title: Management - Linux Command Wrapping Part 9
 toc: true
 ---
 
@@ -150,4 +150,4 @@ FunctionsToExport = @(
 
 ## Next up
 
-With service management and computer info handled, the next module in the queue is `NetTCPIP.Linux`: `Get-NetAdapter`, `Get-NetIPAddress`, `Get-NetRoute` — wrapping `ip link`, `ip addr` and `ip route`. That is part 9.
+With service management and computer info handled, the next module in the queue is `NetTCPIP.Linux`: `Get-NetAdapter`, `Get-NetIPAddress`, `Get-NetRoute` — wrapping `ip link`, `ip addr` and `ip route`. That is part 10.

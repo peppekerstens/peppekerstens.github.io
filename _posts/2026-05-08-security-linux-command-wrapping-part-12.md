@@ -1,9 +1,9 @@
 ---
-title: PowerShell.Security.Linux - Get-Acl and Set-Acl on Linux - Linux Command Wrapping Part 11
+title: PowerShell.Security.Linux - Get-Acl and Set-Acl on Linux - Linux Command Wrapping Part 12
 toc: true
 ---
 
-Part 10 wrapped `apt` as a peer for PSWindowsUpdate. Part 11 tackles **file system permissions** — specifically `Get-Acl` and `Set-Acl` from `Microsoft.PowerShell.Security`, implemented as `Get-LinuxAcl` and `Set-LinuxAcl` in a new module: `PowerShell.Security.Linux`.
+Part 11 wrapped `apt` as a peer for PSWindowsUpdate. Part 12 tackles **file system permissions** — specifically `Get-Acl` and `Set-Acl` from `Microsoft.PowerShell.Security`, implemented as `Get-LinuxAcl` and `Set-LinuxAcl` in a new module: `PowerShell.Security.Linux`.
 
 ## Command wrapping series
 
@@ -257,4 +257,4 @@ The `other` entry's `Permissions[1]` is the write bit character (`w` or `-`). `/
 
 ## Next
 
-Part 12 will implement `PowerShell.LocalAccounts.Linux` — `Get-LocalUser`, `New-LocalUser`, `Set-LocalUser`, `Remove-LocalUser`, and the group equivalents, backed by `useradd`, `usermod`, `passwd`, and `groupadd`.
+Part 13 will implement `PowerShell.LocalAccounts.Linux` — `Get-LocalUser`, `New-LocalUser`, `Set-LocalUser`, `Remove-LocalUser`, and the group equivalents, backed by `useradd`, `usermod`, `passwd`, and `groupadd`.
