@@ -34,6 +34,24 @@ At some point it occurred to me that the bottleneck on this project is not insig
 
 So I decided to try using [OpenCode](https://opencode.ai) with Claude as an accelerator. Not to replace my thinking, but to do the legwork.
 
+## How it actually works — PDCA, not magic
+
+This is the part people tend to gloss over when they talk about AI-assisted development, and I want to be specific about it because the reality is quite different from the marketing.
+
+It is still a plan-do-check-act loop. Every single step of it.
+
+**Plan**: I bring the context. I know what a PowerShell module needs to look like. I know the naming conventions I settled on in parts 1 through 6. I know that `-Filter` combined with `-Exclude` silently misbehaves. I know what broke in the previous session. I know the Pester version quirks on Windows versus Linux. That accumulated experience is what makes the planning useful — without it, you get plausible-looking output that subtly wrong in ways that only surface when you actually run things.
+
+**Do**: The AI writes the scaffolding, the stubs, the test files, the boilerplate. This is where the time saving is real. 157 stub functions for the Storage module. Manifest files. Example scripts. I describe what I want, it produces a first version, I read it.
+
+**Check**: I read the output. I run the tests. Things break. Sometimes in obvious ways, sometimes in subtle ones. The PSPath provider prefix problem — `Get-ChildItem` output carrying `Microsoft.PowerShell.Core\FileSystem::/etc/hosts` instead of a plain path, and `stat` choking on it — that surfaced by running the tests, not by reading the generated code. The check step is not optional. It is where experience still matters most.
+
+**Act**: We fix it. Either I tell the AI what is wrong and it adjusts, or I edit directly and move on. Then we go around again.
+
+The loop is not fast the first time through something new. It gets faster once a pattern is established and the AI has the context to repeat it correctly. But it never becomes automatic. There is always something that needs checking.
+
+I keep the context between sessions in a repository — [peppekerstens/opencode](https://github.com/peppekerstens/opencode) — which contains the master plan, the current task state, and the conventions and discoveries from previous sessions. Without that, each new AI session starts from scratch and you spend half the time re-establishing context. With it, the loop picks up roughly where it left off.
+
 ## Being honest about this
 
 I want to be upfront about what this means for the rest of the series.
@@ -45,6 +63,8 @@ From part 8 onwards, the implementation work has been significantly accelerated 
 Whether that matters to you probably depends on why you are reading this. If you are here for the concepts and patterns — how to wrap Linux CLI tools as PowerShell cmdlets, how to structure cross-platform modules, how to handle Pester across different versions — those are still valid and documented in the posts that follow. If you wanted a pure solo craftsman effort, well, that would have taken another year and there would be fewer posts.
 
 Personally I think this is just a sensible way to work in 2026. The code gets reviewed, the tests get run, the bugs get found and fixed. The result is the result. OpenCode and Claude are my development tools now, alongside VS Code and PowerShell ISE and all the others I have accumulated over the years.
+
+If you want to see the work rather than just read about it: the module repositories are all public on GitHub under [peppekerstens](https://github.com/peppekerstens). Every commit is there. The session planning and task context live in [peppekerstens/opencode](https://github.com/peppekerstens/opencode). The commit history shows the actual back-and-forth — what was generated, what was fixed, what was thrown out. That is as transparent as I know how to be.
 
 ## What AI is actually good at here
 
