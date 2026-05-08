@@ -1,9 +1,9 @@
 ---
-title: Building ten modules - Linux Command Wrapping Part 8
+title: Building eleven modules - Linux Command Wrapping Part 8
 toc: true
 ---
 
-This is the technical post. Ten modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-08-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
+This is the technical post. Eleven modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-08-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
 
 The modules, current as of this writing:
 
@@ -11,7 +11,8 @@ The modules, current as of this writing:
 |---|:---:|:---:|:---:|---|
 | **Storage.Linux** | 0.5.0 | 4 | 157 | [repo][storage] |
 | **PowerShell.Management.Linux** | 0.2.0 | 8 | 7 | [repo][mgmt] |
-| **NetTCPIP.Linux** | 0.3.0 | 8 | 47 | [repo][nettcpip] |
+| **NetTCPIP.Linux** | 0.4.0 | 4 | 30 | [repo][nettcpip] |
+| **DnsClient.Linux** | 0.1.0 | 4 | 17 | [repo][dnsclient] |
 | **Update.Linux** | 0.2.0 | 3 | 19 | [repo][update] |
 | **PowerShell.Security.Linux** | 0.1.0 | 2 | 4 | [repo][security] |
 | **PowerShell.LocalAccounts.Linux** | 0.1.0 | 15 | 0 | [repo][localaccounts] |
@@ -22,7 +23,8 @@ The modules, current as of this writing:
 
 [storage]: https://github.com/peppekerstens/Storage.Linux/blob/d5706f15a7eb34d8bc8065c3e3e5f9586ea5d4da/README.md
 [mgmt]: https://github.com/peppekerstens/PowerShell.Management.Linux/blob/a8401250885185e03f97422f44237ad2f2ba7cfe/README.md
-[nettcpip]: https://github.com/peppekerstens/NetTCPIP.Linux/blob/1b3f03793d8be5ce1269ba8c4efd96447c446cd7/README.md
+[nettcpip]: https://github.com/peppekerstens/NetTCPIP.Linux/blob/bf01bdd4f81a10b5e33887dce972f703f3b1c0bd/README.md
+[dnsclient]: https://github.com/peppekerstens/DnsClient.Linux/blob/240aa4baf866f7a71261cb1bd191fc37116e0058/README.md
 [update]: https://github.com/peppekerstens/Update.Linux/blob/3e32935953f28c7ba04838c83618dced3a0bc947/README.md
 [security]: https://github.com/peppekerstens/PowerShell.Security.Linux/blob/de11772fc00fe9f1dd35ed90a9f43d4e36419d10/README.md
 [localaccounts]: https://github.com/peppekerstens/PowerShell.LocalAccounts.Linux/blob/bad3d99e1178009fc407528e6fe2bf76c4bcb181/README.md
@@ -76,7 +78,7 @@ Early modules used `-Filter` and `-Exclude` parameters on `Get-ChildItem` inside
 
 ### Stub strategy
 
-Windows modules export large surfaces. `Storage` has 161 cmdlets. `NetTCPIP` (merged with DnsClient) covers 55. We cannot implement all of them — and do not need to. The pattern: export every cmdlet name, implement the ones that cover real-world usage, emit `Write-Warning "not yet implemented on Linux"` for the rest.
+Windows modules export large surfaces. `Storage` has 161 cmdlets. `NetTCPIP` covers 34 and `DnsClient` adds 21 more. We cannot implement all of them — and do not need to. The pattern: export every cmdlet name, implement the ones that cover real-world usage, emit `Write-Warning "not yet implemented on Linux"` for the rest.
 
 This keeps `Get-Command -Module Storage.Linux` consistent with the Windows version. Scripts that call a stub get a warning rather than a "command not found" error. If someone needs one of the stubs, the warning message is the signal.
 
@@ -156,7 +158,7 @@ On Linux, the data that Windows returns from a single WMI call comes from six di
 
 ## NetTCPIP.Linux
 
-**IP addresses, routing, TCP connections, and DNS.** This module covers both the Windows `NetTCPIP` module and the `DnsClient` module — they were merged in v0.3.0 since maintaining a separate DnsClient module would have been redundant overhead. 8 implemented, 47 stubs, 55 total exports. [README][nettcpip]
+**IP addresses, routing, and TCP connections.** 4 implemented: `Get-NetIPAddress`, `Get-NetIPConfiguration`, `Get-NetRoute`, `Get-NetTCPConnection`. 30 stubs. DNS cmdlets live in the separate `DnsClient.Linux` module. [README][nettcpip]
 
 ### `ip -json` for structured output
 
@@ -174,13 +176,27 @@ Inside `Get-NetTCPConnection`, the loop variable was named `$localPort` — same
 
 `ip -json route show` returns IPv4 only. IPv6 requires `ip -6 -json route show`. The `default` route has no destination prefix — mapped to `0.0.0.0/0` (IPv4) or `::/0` (IPv6) to match Windows behavior.
 
+---
+
+## DnsClient.Linux
+
+**DNS resolution and client configuration.** Mirrors the Windows `DnsClient` module — kept separate from NetTCPIP.Linux to match the Windows module boundary. 4 implemented: `Resolve-DnsName`, `Clear-DnsClientCache`, `Get-DnsClientServerAddress`, `Get-DnsClientGlobalSetting`. 17 stubs for NRPT, DoH, and remaining configuration cmdlets. [README][dnsclient]
+
+### Why a separate module
+
+On Windows, `DnsClient` and `NetTCPIP` are separate modules — you load them independently and they have distinct scopes. An earlier version merged the DnsClient cmdlets into NetTCPIP.Linux v0.3.0 for convenience. That was wrong. Scripts that do `Import-Module DnsClient` on Windows cannot replicate that with `Import-Module NetTCPIP.Linux` — the names do not match and the intent does not match. v0.4.0 of NetTCPIP.Linux removed all DnsClient cmdlets; DnsClient.Linux v0.1.0 took them as its initial release.
+
 ### `Resolve-DnsName` via `dig`
 
-`dig +noall +answer +authority +additional +ttlid +comments` gives structured section output. The module parses the section markers and maps record types to typed `PSCustomObject` entries with `Name`, `Type`, `TTL`, and `IPAddress` (or `NameHost` for CNAME/PTR, etc.). If `dig` is not installed, the function emits a warning and returns nothing rather than throwing — the warning message includes the package name to install (`dnsutils` / `bind9-dnsutils`).
+`dig +noall +answer +authority +additional +ttlid +comments` gives structured section output. The module parses the section markers and maps record types to typed `PSCustomObject` entries with `Name`, `Type`, `TTL`, and `IPAddress` (or `NameHost` for CNAME/PTR, etc.). If `dig` is not installed, the function throws a terminating error with the package install command in the message — unlike most stubs, DNS resolution with a missing tool is not a graceful degradation situation.
 
 ### `Clear-DnsClientCache` with fallback
 
 `resolvectl flush-caches` works on systemd-resolved systems. On systems without systemd-resolved, the fallback is `nscd --invalidate=hosts`. If neither is available, a warning is emitted. The function is fully `ShouldProcess`-aware — `-WhatIf` reports what would be flushed without running anything.
+
+### `Get-DnsClientServerAddress` from two sources
+
+`/etc/resolv.conf` gives the global nameserver list. `resolvectl status` per interface gives per-interface DNS server assignments. The function merges both, deduplicating where the global and per-interface entries agree. Interface-specific overrides are returned with the interface name populated; the global fallback uses `InterfaceAlias = 'Global'`.
 
 ---
 
@@ -383,9 +399,9 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 
 | Cmdlet | Module | Linux tool |
 |---|---|---|
-| `Resolve-DnsName` | NetTCPIP.Linux | `dig` |
-| `Clear-DnsClientCache` | NetTCPIP.Linux | `resolvectl` / `nscd` |
-| `Get-DnsClientServerAddress` | NetTCPIP.Linux | `/etc/resolv.conf` + `resolvectl` |
+| `Resolve-DnsName` | DnsClient.Linux | `dig` |
+| `Clear-DnsClientCache` | DnsClient.Linux | `resolvectl` / `nscd` |
+| `Get-DnsClientServerAddress` | DnsClient.Linux | `/etc/resolv.conf` + `resolvectl` |
 | `Get-NetIPAddress` | NetTCPIP.Linux | `ip -json addr` |
 | `Get-NetIPConfiguration` | NetTCPIP.Linux | `ip -json addr` + `ip -json route` |
 | `Get-NetRoute` | NetTCPIP.Linux | `ip -json route` |
@@ -396,8 +412,8 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 | Cmdlet | Module | Future tool |
 |---|---|---|
 | `Find-NetRoute` | NetTCPIP.Linux | `ip route get` |
-| `Get-DnsClient` | NetTCPIP.Linux | `resolvectl` |
-| `Get-DnsClientCache` | NetTCPIP.Linux | `resolvectl statistics` |
+| `Get-DnsClient` | DnsClient.Linux | `resolvectl` |
+| `Get-DnsClientCache` | DnsClient.Linux | `resolvectl statistics` |
 | `Get-NetIPInterface` | NetTCPIP.Linux | `ip link` |
 | `Get-NetIPv4Protocol` | NetTCPIP.Linux | `sysctl` |
 | `Get-NetIPv6Protocol` | NetTCPIP.Linux | `sysctl` |
@@ -519,4 +535,4 @@ The next module on the list: **NetAdapter.Linux** — `ip link show`, `ip link s
 
 ---
 
-All ten module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). The links in the table at the top of this post go to specific commits, so they will show the code as it was when this post was written. Pull requests welcome.
+All eleven module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). The links in the table at the top of this post go to specific commits, so they will show the code as it was when this post was written. Pull requests welcome.
