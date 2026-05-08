@@ -17,8 +17,8 @@ The modules, current as of this writing:
 | **PowerShell.Security.Linux** | 0.1.0 | 2 | 4 | [repo][security] |
 | **PowerShell.LocalAccounts.Linux** | 0.1.0 | 15 | 0 | [repo][localaccounts] |
 | **ScheduledTasks.Linux** | 0.1.0 | 13 | 2 | [repo][scheduledtasks] |
-| **PKI.Linux** | 0.3.0 | 8 | 9 | [repo][pki] |
-| **PrintManagement.Linux** | 0.1.0 | 7 | 15 | [repo][printmgmt] |
+| **PKI.Linux** | 0.3.1 | 8 | 9 | [repo][pki] |
+| **PrintManagement.Linux** | 0.1.1 | 7 | 15 | [repo][printmgmt] |
 | **PowerShell.Utility.Linux** | 0.4.0 | 4 | 0 | [repo][utility] |
 | **NetAdapter.Linux** | 0.1.0 | 4 | 74 | [repo][netadapter] |
 
@@ -30,10 +30,10 @@ The modules, current as of this writing:
 [security]: https://github.com/peppekerstens/PowerShell.Security.Linux/blob/de11772fc00fe9f1dd35ed90a9f43d4e36419d10/README.md
 [localaccounts]: https://github.com/peppekerstens/PowerShell.LocalAccounts.Linux/blob/bad3d99e1178009fc407528e6fe2bf76c4bcb181/README.md
 [scheduledtasks]: https://github.com/peppekerstens/ScheduledTasks.Linux/blob/aeb6777fa24c15210fc5cbad24ae051d0a8261d3/README.md
-[pki]: https://github.com/peppekerstens/PKI.Linux/blob/77cff59473eaca2ff603045d28fc4b2199fa9806/README.md
-[printmgmt]: https://github.com/peppekerstens/PrintManagement.Linux/blob/d4d4b742f5eff77c06774b72115a53b7df53486d/README.md
+[pki]: https://github.com/peppekerstens/PKI.Linux/blob/582b944/README.md
+[printmgmt]: https://github.com/peppekerstens/PrintManagement.Linux/blob/56cf9a2/README.md
 [utility]: https://github.com/peppekerstens/PowerShell.Utility.Linux/blob/ab80349958285ade7107873e8a64303fcf8fc5f9/README.md
-[netadapter]: https://github.com/peppekerstens/NetAdapter.Linux/blob/0426b69b21eef256613ac552f1cf274211a59251/README.md
+[netadapter]: https://github.com/peppekerstens/NetAdapter.Linux/blob/5a12624/README.md
 
 All repositories are public under [peppekerstens](https://github.com/peppekerstens). All modules have been tested on WSL2 Ubuntu 24.04. Each README has a detailed "How we built this" section if you want the full story on a specific module.
 
