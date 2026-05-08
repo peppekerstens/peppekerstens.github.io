@@ -583,3 +583,54 @@ The remaining ❌ cmdlets are SMB/NFS client cmdlets — deprioritized given the
 ---
 
 All twelve module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). The links in the table at the top of this post go to specific commits, so they will show the code as it was when this post was written. Pull requests welcome.
+
+---
+
+## PSScriptAnalyzer — Getting to Zero
+
+After all twelve modules were test-complete, we ran [PSScriptAnalyzer](https://github.com/PowerShell/PSScriptAnalyzer) across every module to systematically clean up code quality issues.
+
+**Baseline:** Error=6, Warning=399 across 12 modules.
+
+### Real bugs fixed
+
+The errors and actionable warnings turned out to be genuine defects worth fixing:
+
+**Automatic variable collisions:**
+- `Get-LocalUser.ps1`: variable `$home` overwrites PowerShell's read-only automatic variable (`$HOME`). Renamed to `$homeDir`.
+- `New-LocalUser.ps1`, `Rename-LocalUser.ps1`: variable `$args` overwrites the automatic `$args` array. Renamed to `$cmdArgs`.
+
+**Empty catch blocks:**
+Seven empty `catch { }` blocks across `Get-LocalUser.ps1`, `Get-ComputerInfo.ps1`, and `Get-ScheduledTaskInfo.ps1` swallowed exceptions silently. Changed to `catch { Write-Debug $_.Exception.Message }` — still non-fatal, but now debuggable.
+
+**Pipeline functions without `process {}`:**
+Eleven functions declared `ValueFromPipeline` or `ValueFromPipelineByPropertyName` on parameters but had no `process {}` block, meaning only the *last* piped value would be processed. Fixed by wrapping the entire function body (including the Windows delegation path) in `process {}`. The affected functions were spread across `Storage.Linux`, `PowerShell.Management.Linux`, `ScheduledTasks.Linux`, `PKI.Linux`, and `PowerShell.Utility.Linux`.
+
+One subtle trap: putting code *before* `process {}` in a function body causes PowerShell (and PSSA) to interpret the `process` keyword as the `Get-Process` cmdlet alias. The `process {}` named block must be the first statement in the function body.
+
+**Manifest issues:**
+`PowerShell.LocalAccounts.Linux.psd1` had `CmdletsToExport = '*'` — changed to `CmdletsToExport = @()` since the module exports functions, not compiled cmdlets.
+
+**Credential parameter type:**
+`Get-Certificate.ps1` had `[object] $Credential`. Changed to `[PSCredential]` with the `[System.Management.Automation.Credential()]` attribute, matching the correct PowerShell credential pattern.
+
+**Unused variables:**
+`Stop-Service.ps1`: `$params = @{}` built but then bypassed. `Get-Service.ps1`: `$loadState` captured but never used. `Resolve-DnsName.ps1`: a first `$lines` capture was immediately overwritten by a better `$rawLines` call. All removed.
+
+### Intentional patterns — suppressed, not fixed
+
+A large chunk of the warnings were correct rule violations but *intentional by design*:
+
+| Rule | Count | Reason |
+|---|:---:|---|
+| `PSAvoidOverwritingBuiltInCmdlets` | 18 | That's literally what the modules do |
+| `PSUseShouldProcessForStateChangingFunctions` | 110 | Stub functions don't change state — they emit a warning |
+| `PSShouldProcess` | 75 | Same stubs: `SupportsShouldProcess` without calling `$PSCmdlet.ShouldProcess()` |
+| `PSReviewUnusedParameter` | 79 | Stub parameters exist for interface parity with Windows cmdlets |
+| `PSUseBOMForUnicodeEncodedFile` | 66 | Cross-platform UTF-8 without BOM is intentional |
+
+These were suppressed by adding a `PSScriptAnalyzerSettings.psd1` at the root of each of the twelve module repos with an `ExcludeRules` list. This is cleaner than sprinkling `[SuppressMessageAttribute]` on every stub function.
+
+The `run-pssa.ps1` runner was updated to pass `-Settings` per module, and to filter results from `Helpers\` and `Crescendo\` directories (scratch/generated files that are not part of the module surface).
+
+**Final result:** Error=0, Warning=0 across all 12 modules. 0 test regressions (204 pass, 1309 skip on Windows; 1513 total unchanged).
