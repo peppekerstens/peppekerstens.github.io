@@ -1,9 +1,9 @@
 ---
-title: Building eleven modules - Linux Command Wrapping Part 8
+title: Building twelve modules - Linux Command Wrapping Part 8
 toc: true
 ---
 
-This is the technical post. Eleven modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-08-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
+This is the technical post. Twelve modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-08-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
 
 The modules, current as of this writing:
 
@@ -20,6 +20,7 @@ The modules, current as of this writing:
 | **PKI.Linux** | 0.3.0 | 8 | 9 | [repo][pki] |
 | **PrintManagement.Linux** | 0.1.0 | 7 | 15 | [repo][printmgmt] |
 | **PowerShell.Utility.Linux** | 0.4.0 | 4 | 0 | [repo][utility] |
+| **NetAdapter.Linux** | 0.1.0 | 4 | 74 | [repo][netadapter] |
 
 [storage]: https://github.com/peppekerstens/Storage.Linux/blob/d5706f15a7eb34d8bc8065c3e3e5f9586ea5d4da/README.md
 [mgmt]: https://github.com/peppekerstens/PowerShell.Management.Linux/blob/a8401250885185e03f97422f44237ad2f2ba7cfe/README.md
@@ -32,6 +33,7 @@ The modules, current as of this writing:
 [pki]: https://github.com/peppekerstens/PKI.Linux/blob/77cff59473eaca2ff603045d28fc4b2199fa9806/README.md
 [printmgmt]: https://github.com/peppekerstens/PrintManagement.Linux/blob/d4d4b742f5eff77c06774b72115a53b7df53486d/README.md
 [utility]: https://github.com/peppekerstens/PowerShell.Utility.Linux/blob/ab80349958285ade7107873e8a64303fcf8fc5f9/README.md
+[netadapter]: https://github.com/peppekerstens/NetAdapter.Linux/blob/0426b69b21eef256613ac552f1cf274211a59251/README.md
 
 All repositories are public under [peppekerstens](https://github.com/peppekerstens). All modules have been tested on WSL2 Ubuntu 24.04. Each README has a detailed "How we built this" section if you want the full story on a specific module.
 
@@ -47,11 +49,11 @@ Current status across the 118 in-scope cmdlets:
 
 | Status | Count | % |
 |---|:---:|:---:|
-| ✅ Implemented | 59 | 50 % |
+| ✅ Implemented | 63 | 53 % |
 | 🔶 Stubbed (warns on call) | 51 | 43 % |
-| ❌ Not covered | 8 | 7 % |
+| ❌ Not covered | 4 | 3 % |
 
-The 8 uncovered cmdlets are all NetAdapter basics (`Get-NetAdapter`, `Enable-NetAdapter`, `Disable-NetAdapter`, `Get-NetAdapterStatistics`) and NFS client cmdlets (`Get-NfsSession`, `Get-NfsClientConfiguration`, `Disconnect-NfsSession`, `Block-SmbClientAccessToServer`). Security is 100% covered. Sundry is 91% covered. That feels pretty solid.
+The 4 uncovered cmdlets are all NFS/SMB client cmdlets (`Get-NfsSession`, `Get-NfsClientConfiguration`, `Disconnect-NfsSession`, `Block-SmbClientAccessToServer`) — deprioritized. The networking ❌ gap (NetAdapter) is now fully covered. Security is 100% covered. Networking is 100% covered. That feels solid.
 
 ---
 
@@ -312,6 +314,28 @@ Two terminal UI frameworks exist: `Microsoft.PowerShell.ConsoleGuiTools` (Termin
 
 ---
 
+## NetAdapter.Linux
+
+**Network adapter management.** 4 implemented: `Get-NetAdapter`, `Get-NetAdapterStatistics`, `Enable-NetAdapter`, `Disable-NetAdapter`. 74 stubs for NDIS hardware offload and other Windows-specific cmdlets. This module closes the last ❌ gap in the networking region. [README][netadapter]
+
+### `ip -json link show`
+
+`iproute2` has supported `--json` since kernel 4.12 (2017). `Get-NetAdapter` uses `ip -json link show` — no text parsing. Each link object has `ifindex`, `ifname`, `address` (MAC), `operstate`, `flags`, `mtu`, and `link_type`.
+
+### Link speed from `/sys/class/net`
+
+`ip link show` does not include link speed. Speed is read from `/sys/class/net/<name>/speed`. Virtual adapters (loopback, bridges, tunnels) return -1 or an error — these are reported as `Unknown`. Physical adapters on a live link return the speed in Mbps.
+
+### Statistics from `ip -s -json link show`
+
+The `-s` flag adds a `stats64` subtree to each link object with `rx` and `tx` sub-objects containing `bytes`, `packets`, `errors`, and `dropped`. `Get-NetAdapterStatistics` maps these directly to `ReceivedBytes`, `SentBytes`, etc.
+
+### NDIS offload cmdlets — out of scope
+
+The majority of the Windows NetAdapter surface covers Windows NDIS hardware offload: checksum offload, LSO, RSS, VMQ, SR-IOV, etc. Linux has equivalent features but they are controlled via `ethtool`, `sysfs`, and driver-specific interfaces — not a unified API. All 74 non-implemented cmdlets are stubbed with `Write-Warning`.
+
+---
+
 ## Coverage analysis
 
 After ten modules, going back to [Evgenij Smirnov's gap list](https://github.com/psconfeu/2025/blob/main/Evgenij%20Smirnov/Linux/00-inthebox/MissingCmdletsGroupedSorted.ps1) from the 2025 European PowerShell Summit. The list has 209 cmdlets. 91 are genuinely Windows-specific with no useful Linux equivalent (VPN stack, IPsec policy engine, Teredo, Windows Firewall model, NDIS hardware offload API). The remaining 118 are the target.
@@ -324,14 +348,14 @@ Legend: ✅ Implemented · 🔶 Stubbed (warns, returns nothing) · ❌ No modul
 |---|:---:|:---:|:---:|:---:|:---:|
 | Disk / Storage | 26 | 3 | 23 | 0 | 0 |
 | Printing | 18 | 6 | 12 | 0 | 0 |
-| Networking | 105 | 7 | 9 | 4 | 85 |
+| Networking | 105 | 11 | 9 | 0 | 85 |
 | Services / Tasks | 22 | 16 | 6 | 0 | 0 |
 | Client (SMB/NFS) | 4 | 0 | 0 | 4 | 0 |
 | Security | 17 | 17 | 0 | 0 | 0 |
 | Sundry | 17 | 10 | 1 | 0 | 6 |
-| **Total** | **209** | **59** | **51** | **8** | **91** |
+| **Total** | **209** | **63** | **51** | **4** | **91** |
 
-Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.**
+Of the 118 in-scope cmdlets: **53% implemented, 43% stubbed, 3% not yet covered (SMB/NFS client).**
 
 ---
 
@@ -395,7 +419,7 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 
 ### Networking (105 cmdlets)
 
-**Implemented (7)**
+**Implemented (11)**
 
 | Cmdlet | Module | Linux tool |
 |---|---|---|
@@ -406,6 +430,10 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 | `Get-NetIPConfiguration` | NetTCPIP.Linux | `ip -json addr` + `ip -json route` |
 | `Get-NetRoute` | NetTCPIP.Linux | `ip -json route` |
 | `Get-NetTCPConnection` | NetTCPIP.Linux | `ss -tnap` |
+| `Get-NetAdapter` | NetAdapter.Linux | `ip -json link show` |
+| `Get-NetAdapterStatistics` | NetAdapter.Linux | `ip -s -json link show` |
+| `Enable-NetAdapter` | NetAdapter.Linux | `ip link set up` |
+| `Disable-NetAdapter` | NetAdapter.Linux | `ip link set down` |
 
 **Stubbed — in-module, potentially Linux-implementable (9)**
 
@@ -421,14 +449,9 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 | `Get-NetTCPSetting` | NetTCPIP.Linux | `sysctl net.ipv4.tcp_*` |
 | `Test-NetConnection` | NetTCPIP.Linux | `ping` / `nc` |
 
-**Not covered — no module yet, implementable (4)**
+**Not covered — no module yet, implementable (0)**
 
-| Cmdlet | Linux tool |
-|---|---|
-| `Get-NetAdapter` | `ip link show` |
-| `Enable-NetAdapter` | `ip link set up` |
-| `Disable-NetAdapter` | `ip link set down` |
-| `Get-NetAdapterStatistics` | `ip -s link` |
+All networking cmdlets from Evgenij's list are now covered (implemented or stubbed in a module).
 
 **Out of scope — Windows-specific (85)**
 
@@ -531,8 +554,8 @@ Of the 118 in-scope cmdlets: **50% implemented, 43% stubbed, 7% not yet covered.
 
 ---
 
-The next module on the list: **NetAdapter.Linux** — `ip link show`, `ip link set up/down`, `ip -s link`. Four cmdlets, clears the entire ❌ gap in the networking region.
+The remaining ❌ cmdlets are SMB/NFS client cmdlets — deprioritized given the complexity of SMB server-side infrastructure and the low value of NFS client wrappers at this stage.
 
 ---
 
-All eleven module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). The links in the table at the top of this post go to specific commits, so they will show the code as it was when this post was written. Pull requests welcome.
+All twelve module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). The links in the table at the top of this post go to specific commits, so they will show the code as it was when this post was written. Pull requests welcome.
