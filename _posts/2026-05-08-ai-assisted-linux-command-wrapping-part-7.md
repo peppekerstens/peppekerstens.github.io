@@ -84,6 +84,6 @@ Writing in my voice. That is presumably obvious from reading this post versus th
 
 ## What is next
 
-Parts 8 onwards cover the actual module implementations. The writing style in those posts is different from the earlier ones — more structured, more technical, less rambling. That is partly because the AI helped write them and partly because at that point I was already deep enough into the project that the exploratory phase was over.
+Part 8 covers all seven module implementations in one go: Storage, Management, NetTCPIP, Update, Security, LocalAccounts, and ScheduledTasks. Rather than a separate post per module — which would have been six more posts of decreasing novelty — I collapsed them into one technical deep-dive covering the cross-cutting patterns that apply to every module, and then the per-module highlights where something interesting happened.
 
-Starting with `Storage.Linux` in part 8, which turned out to be more interesting than expected. 161 cmdlets, 4 implemented, 157 stubs, and one very annoying bug involving `lsblk` and human-readable size strings.
+The short version: seven modules, roughly 250 cmdlets total across them, all tested on WSL2, all public on GitHub. The slightly longer version is in part 8.
