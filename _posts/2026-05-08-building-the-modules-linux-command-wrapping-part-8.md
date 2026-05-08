@@ -336,6 +336,30 @@ The majority of the Windows NetAdapter surface covers Windows NDIS hardware offl
 
 ---
 
+## Test coverage
+
+All 12 modules were run through their full Pester test suites on both Windows (PS 7.5.1, Pester 5.3.3) and WSL2 Ubuntu 24.04 (PS 7.5.1, Pester 5.7.1). 1513 tests total. Zero failures on either platform.
+
+| Module | Tests | Win Pass | Win Skip | WSL Pass | WSL Skip |
+|---|:---:|:---:|:---:|:---:|:---:|
+| `Storage.Linux` | 534 | 15 | 519 | 533 | 1 |
+| `PowerShell.Management.Linux` | 89 | 15 | 74 | 89 | 0 |
+| `NetTCPIP.Linux` | 167 | 15 | 152 | 167 | 0 |
+| `DnsClient.Linux` | 103 | 12 | 91 | 97 | 6 |
+| `Update.Linux` | 134 | 63 | 71 | 134 | 0 |
+| `PowerShell.Security.Linux` | 78 | 37 | 41 | 78 | 0 |
+| `PowerShell.LocalAccounts.Linux` | 71 | 10 | 61 | 70 | 1 |
+| `ScheduledTasks.Linux` | 56 | 17 | 39 | 39 | 17 |
+| `PKI.Linux` | 37 | 1 | 36 | 36 | 1 |
+| `PrintManagement.Linux` | 45 | 1 | 44 | 21 | 24 |
+| `PowerShell.Utility.Linux` | 28 | 18 | 10 | 26 | 2 |
+| `NetAdapter.Linux` | 171 | 0 | 171 | 171 | 0 |
+| **TOTAL** | **1513** | **204** | **1309** | **1461** | **52** |
+
+Windows skips are all Linux-only tests. WSL skips are tool-conditional: CUPS not installed (PrintManagement, 24), `dig` not installed (DnsClient, 6), systemd task tests require non-root elevation (ScheduledTasks, 17), and a handful of single-test edge cases across other modules.
+
+---
+
 ## Coverage analysis
 
 After ten modules, going back to [Evgenij Smirnov's gap list](https://github.com/psconfeu/2025/blob/main/Evgenij%20Smirnov/Linux/00-inthebox/MissingCmdletsGroupedSorted.ps1) from the 2025 European PowerShell Summit. The list has 209 cmdlets. 91 are genuinely Windows-specific with no useful Linux equivalent (VPN stack, IPsec policy engine, Teredo, Windows Firewall model, NDIS hardware offload API). The remaining 118 are the target.
