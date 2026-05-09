@@ -24,9 +24,9 @@ Eight modules use CLI tools in a way that could plausibly benefit from a shared 
 | Storage.Linux | `lsblk` | Yes — `--json` | **Fix the existing wrapper** |
 | NetTCPIP.Linux | `ip`, `ss` | `ip` yes / `ss` no | **Migrate `ip`** |
 | NetAdapter.Linux | `ip` | Yes | **Migrate `ip`** |
-| DnsClient.Linux | `dig`, `resolvectl` | No | Keep custom parsing |
-| PowerShell.Management.Linux | `systemctl` | Partial | Keep custom parsing |
-| ScheduledTasks.Linux | `systemctl` | Partial | Keep custom parsing |
+| DnsClient.Linux | `dig`, `resolvectl` | Yes — `resolvectl --json=short` | ~~Keep custom parsing~~ **Migrated** (see addendum) |
+| PowerShell.Management.Linux | `systemctl` | Yes — `--output=json` for list ops | ~~Keep custom parsing~~ **Migrated** (see addendum) |
+| ScheduledTasks.Linux | `systemctl` | Yes — `--output=json` for list ops | ~~Keep custom parsing~~ **Migrated** (see addendum) |
 | PowerShell.LocalAccounts.Linux | `getent` | No | Keep custom parsing |
 | PrintManagement.Linux | `lpstat`, `lpadmin` | No | Keep custom parsing |
 
@@ -134,6 +134,50 @@ The harder lesson is adjacent to that: the first implementation is rarely the ri
 Going back through twelve modules looking for exactly that kind of quiet brokenness is the kind of work that does not feel exciting. It does not produce new cmdlets or new features. It produces code that works more correctly in cases that the tests did not catch.
 
 That, too, is worth doing.
+
+## Addendum — three more migrations (what I got wrong)
+
+The audit above was wrong about three modules. I published it, then immediately discovered the errors when I actually ran the commands against WSL2. So: corrections, with the embarrassing details included.
+
+**`systemctl list-units` and `systemctl list-timers` do support `--output=json`.**
+
+The post says they do not. "The `--output=json` flag exists for `systemctl show <unit>` but not for list operations." That sentence is wrong. `systemctl list-units --output=json` produces a JSON array. `systemctl list-timers --output=json` produces a JSON array. `systemctl list-unit-files --output=json` produces a JSON array. I had based that conclusion on memory and a quick scan of the flags — not on actually running the commands. Running them produced:
+
+```json
+[
+  {"unit":"apparmor.service","load":"loaded","active":"inactive","sub":"dead","description":"Load AppArmor profiles"},
+  ...
+]
+```
+
+That is exactly what you want. Clean, typed, no column-width fragility. `Get-Service` and `Get-ScheduledTask` have now been rewritten to use JSON.
+
+`Get-ScheduledTask` also had an N+1 problem I had not noticed: it called `systemctl show <unit>` once per timer to get `ActiveState`, `Description`, and `FragmentPath`. Bulk `systemctl show unit1 unit2 unit3 ...` works — units are separated by blank lines in the output — so the rewrite makes one bulk call for all timers instead of N per-timer calls.
+
+**`dig` is not installed in WSL2. `resolvectl` is.**
+
+The post says `dig` is the right tool for `Resolve-DnsName` and that `resolvectl` only handles cache flushing and per-interface queries. The actual situation: `dig` requires installing `dnsutils` or `bind9-dnsutils`, which is not in the base Ubuntu WSL2 image. `resolvectl` ships with systemd-resolved and is always present on modern distros.
+
+More importantly: `resolvectl query --json=short --type=<TYPE>` works for A, AAAA, CNAME, MX, NS, PTR, SOA, SRV, and TXT records. Each result comes back as a separate JSON line:
+
+```json
+{"key":{"class":1,"type":1,"name":"dns.google"},"address":[8,8,8,8]}
+{"key":{"class":1,"type":1,"name":"dns.google"},"address":[8,8,4,4]}
+```
+
+That is cleaner than parsing `dig` section headers. The `Resolve-DnsName` implementation has been rewritten to use `resolvectl`. The `dig`-based text parser is gone. PTR arpa conversion (reversing the IP to `.in-addr.arpa`) is now handled automatically — pass the plain IP, get the right answer.
+
+**What the corrected audit actually produced:**
+
+Six modules changed. Three commits pushed in session 1, three more in session 2:
+
+- `DnsClient.Linux`: commit `4f8ac6e`
+- `ScheduledTasks.Linux`: commit `45191b0`
+- `PowerShell.Management.Linux`: commit `a755f09`
+
+WSL2 Pester: 86+30+60 = 176 additional tests passing, 0 failures.
+
+The lesson from the first session — the Crescendo wrapper from Part 4 was quietly broken because nobody tested it in the environment it was meant to run in — applies here too. The audit conclusions about `systemctl` and `dig` were wrong for exactly the same reason: I did not run the commands.
 
 ## Next
 
