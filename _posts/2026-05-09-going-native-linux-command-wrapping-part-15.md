@@ -85,9 +85,9 @@ In Stage 4, the same issue came up for `ping` (which needs `CAP_NET_RAW`). The f
 
 | Module | Cmdlets | Tests | Head |
 |---|---|---|---|
-| `LocalAccounts.Linux.Native` | 15 full (P/Invoke reads) | 116 | [`0abc290`](https://github.com/peppekerstens/LocalAccounts.Linux.Native/commit/0abc290) |
-| `ScheduledTasks.Linux.Native` | 13 full + 2 stubs | 63 | [`26714a2`](https://github.com/peppekerstens/ScheduledTasks.Linux.Native/commit/26714a2) |
-| `NetTCPIP.Linux.Native` | 10 full + 24 stubs | — | [`4a335bf`](https://github.com/peppekerstens/NetTCPIP.Linux.Native/commit/4a335bf) |
+| `LocalAccounts.Linux.Native` | 15 full (P/Invoke reads) | 116 | [`6273baf`](https://github.com/peppekerstens/LocalAccounts.Linux.Native/commit/6273baf) |
+| `ScheduledTasks.Linux.Native` | 13 full + 2 stubs | 63 | [`4dcc235`](https://github.com/peppekerstens/ScheduledTasks.Linux.Native/commit/4dcc235) |
+| `NetTCPIP.Linux.Native` | 10 full + 24 stubs | — | [`3df46c4`](https://github.com/peppekerstens/NetTCPIP.Linux.Native/commit/3df46c4) |
 
 All three: 0 build warnings, 0 build errors, 5-distro GHA matrix.
 
@@ -101,6 +101,48 @@ The parallel CLI-wrapper repos remain untouched:
 
 Two repo families, same cmdlet names, same output shapes, different implementation technology. For now, both exist. That is fine.
 
+## Finishing the job: subprocess audit and /proc reads
+
+After the initial Stage 5 push, a subprocess audit ran across all three repos. The question was straightforward: every call to `Process.Start` is a potential latency hit and a dependency on an external binary. Which ones can be eliminated?
+
+The results were mixed in an informative way.
+
+**`LocalAccounts.Linux.Native`** was already clean. The read path uses P/Invoke for everything — `getpwent`, `getgrent`, `getspnam` — so `Process.Start` only appears in write cmdlets (`useradd`, `usermod`, `userdel`, `groupadd`, `groupmod`, `groupdel`, `gpasswd`, `chpasswd`, `chage`). Those are correct uses: the Linux user management tools are the authoritative write interface and there is no sensible P/Invoke alternative. One minor cleanup: `SystemdHelpers.cs` had a `Run("id", "-u")` subprocess call to get the current UID. That was replaced with a direct `getuid()` P/Invoke — a two-line change, cleaner, and removes one process spawn per cmdlet invocation.
+
+Wait, that is in `ScheduledTasks.Linux.Native`, not LocalAccounts. Let me restate that correctly.
+
+**`ScheduledTasks.Linux.Native`** had one read-path subprocess hiding in the helpers: `Run("id", "-u")` to get the current user's UID in order to decide whether to write system-scope or user-scope unit files. This is exactly the kind of thing P/Invoke handles trivially. `getuid()` is a single-syscall libc function with a dead-simple signature:
+
+```csharp
+[LibraryImport("libc")]
+private static partial uint getuid();
+```
+
+One subprocess gone. The rest of the write paths (`systemctl daemon-reload`, `systemctl enable`, `systemctl start`, `File.WriteAllText` for unit files) stay as-is — that is the correct interface for systemd.
+
+**`NetTCPIP.Linux.Native`** was the interesting one. The original `IpHelpers.cs` implemented reads by calling `ip -json addr show`, `ip -json route show`, and `ss -tnap`, then parsing JSON or structured text. This worked, and it matched the Stage 1 PowerShell wrapper almost exactly. But it also meant every call to `Get-NetIPAddress` spawned a subprocess.
+
+The BCL's `System.Net.NetworkInformation.NetworkInterface` already exposes everything `ip addr show` returns — interface name, address list, prefix lengths — without touching the shell. `/proc/net/route` and `/proc/net/ipv6_route` contain the full routing table in hex-encoded text. `/proc/net/tcp` and `/proc/net/tcp6` contain the TCP socket table with state codes and inodes. Cross-referencing `/proc/<pid>/fd/` for `socket:[inode]` symlinks gives you PID.
+
+All four read paths were rewritten to use these sources directly. The parsing is more explicit than JSON parsing — you are reading raw hex and converting it — but it is also faster and has no external binary dependency.
+
+The hex formats are worth documenting because they are not obvious:
+
+- `/proc/net/route`: each column after the interface name is hex. The destination and gateway are 4-byte little-endian IPv4 addresses, so `0101A8C0` is `192.168.1.1` (bytes reversed: `C0`, `A8`, `01`, `01`).
+- `/proc/net/ipv6_route`: 32-character hex strings, big-endian, representing 16-byte IPv6 addresses. No reversal needed.
+- `/proc/net/tcp`: local and remote addresses are `hex_ip:hex_port`. State is a hex byte that maps to the TCP state name.
+- PID lookup: scan `/proc/<pid>/fd/` for symlinks whose targets are `socket:[inode]`. Match the inode against the socket table entry. This is O(processes × file descriptors), which sounds expensive, but on a typical system with a few hundred processes it is fast enough in practice.
+
+One CA1416 build error came up in the process. `UnicastIPAddressInformation.AddressValidLifetime` and `AddressPreferredLifetime` are Windows-only BCL properties — the Roslyn analyser correctly flags them as not callable from a target-platform-agnostic binary. On Linux, the kernel exposes address lifetime via rtnetlink, but the BCL does not surface it through `NetworkInterface`. The fix was to return `TimeSpan.MaxValue` (infinite) on non-Windows and guard the Windows-only property access with `OperatingSystem.IsWindows()`:
+
+```csharp
+var validLifeRaw = OperatingSystem.IsWindows() ? uni.AddressValidLifetime : uint.MaxValue;
+```
+
+Pragmatic, correct, and the `#pragma warning disable CA1416` makes the intent explicit. The error is not suppressed silently — it is documented in the code.
+
+After the rewrite: 0 build warnings, 0 build errors. The subprocess count in `IpHelpers.cs` for read operations is now zero.
+
 ## What this is building towards
 
 The Tier 2 label on Stage 5 was "external binary module — faster to ship, upstream later." The "upstream later" part is the next honest question.
@@ -113,8 +155,8 @@ The gap between "works in a GitHub repo" and "accepted into PS7" is mostly about
 
 ## Next
 
-The Tier 2 work is complete. Three modules, three repos, parallel to the existing CLI wrappers. The Tier 1 question — contributing directly to the PowerShell project — is open.
+The Tier 2 work is complete and cleaned up. Three modules, three repos, subprocess-free read paths, parallel to the existing CLI wrappers. The Tier 1 question — contributing directly to the PowerShell project — is open.
 
-Before going there, though, there is something that has been sitting in the background since Part 14: the GHA workflows have never actually run against these three new repos in a completed state. The images exist, the workflows are there, but I have not looked at a green matrix yet. That is the obvious next thing to verify.
+Before going there: the GHA workflows have never actually run against these three repos in a fully completed state. The images exist, the workflows are there, but a green matrix across all five distros has not been confirmed yet. That is the obvious next thing to verify.
 
-Pending that: the RFC process, what it involves, and whether any of these three modules are a reasonable upstream candidate.
+Pending that: the RFC process, what it involves, and whether any of these three modules is a reasonable upstream candidate.
