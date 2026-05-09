@@ -26,6 +26,26 @@ Each of those is weeks of work if done properly. Research, implementation, Peste
 
 And I still believe in the goal. The cmdlet gap between Windows PowerShell and Linux is still very much there. Nobody else seems to be sprinting to close it either. Evgenij Smirnov's call to action from the 2025 Summit still rings true.
 
+## The plan, such as it is
+
+Before I get into how I restarted, it is worth being explicit about the overall structure of this project — because the rest of the series will keep referring to "Stage 3" and "Stage 5" and so on, and that is going to be confusing if you do not know what the stages are.
+
+Parts 1 through 6 were Stage 1. That phase was: figure out what approach to use, build a handful of modules by hand, discover the limits of proxy functions and Crescendo, and establish the patterns that everything else would follow. The output was a few modules with limited real implementations, a set of conventions, and a list of lessons learned the hard way.
+
+When I picked this back up in 2026, I sat down and wrote out the remaining work as a sequence of stages. Here is what I came up with:
+
+**Stage 2 — Audit.** Before implementing another hundred stubs, I wanted to go back over the Stage 1 modules and ask whether the approach was actually right. Crescendo in particular — I used it in Part 4 and was on the fence about it. Did it actually help, or did it just add a layer? Stage 2 was a structured answer to that question. The result would inform how Stage 3 was implemented.
+
+**Stage 3 — Implement the remaining stubs.** The modules from Stage 1 are full of `Write-Warning "not yet implemented"` placeholder functions. Stage 3 is the job of replacing those with real implementations. Also covers two modules that were missing entirely: `SmbShare.Linux` and `PackageManagement.Linux`. The goal at the end of Stage 3: every exported cmdlet either does something real or deliberately and clearly signals that it does not apply on Linux. No silent failures.
+
+**Stage 4 — Multi-distro testing.** After Stage 3, all testing was done on a single Ubuntu WSL2 instance. That is a fine development baseline but a poor quality signal. Linux is not one thing — package names differ, tool availability differs, path conventions differ. Stage 4 is the infrastructure work: pre-built Docker images per distro, GitHub Actions workflows, local Docker Compose runs. The goal: every module, every push, tested on five distributions.
+
+**Stage 5 — Native C# binary modules.** This one is more ambitious and more speculative. The PowerShell project is a C# codebase. If any of these Linux cmdlets are ever to land upstream — in PS7 itself, not in separately-installed modules — they have to be implemented in C#. Stage 5 takes the three most viable modules from the PowerShell wrappers and translates them into proper binary modules: `LocalAccounts.Linux.Native`, `ScheduledTasks.Linux.Native`, `NetTCPIP.Linux.Native`. The Stage 1 implementations serve as the functional spec. Whether upstream contribution actually happens is a separate question; Stage 5 produces the artifacts that would make it possible.
+
+That is the shape of the project from Part 7 onwards. Each stage gets its own posts as it happens.
+
+One thing I did not write into the plan: how long any of this would take. I have learned not to estimate that.
+
 ## Enter AI
 
 I have been experimenting with AI tooling at work for a while now. Mostly code review, explaining unfamiliar codebases, that sort of thing. Nothing groundbreaking.
