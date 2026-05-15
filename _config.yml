@@ -54,6 +54,7 @@ exclude:
   - tmp
   - /docs
   - /test
+  - plan.md
 keep_files:
   - .git
 encoding: "utf-8"
