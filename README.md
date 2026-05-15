@@ -14,4 +14,5 @@ Personal blog at [peppekerstens.github.io](https://peppekerstens.github.io) — 
 | 2026-05-15 | Remove `staticman.yml`, root `package.json`/`package-lock.json` (dead config / theme artifacts) |
 | 2026-05-15 | Replace 400-line VS Code `.gitignore` with Jekyll-focused one |
 | 2026-05-15 | Clean up `_config.yml` exclude list |
+| 2026-05-15 | Generate `Gemfile.lock` for reproducible builds; add `Containerfile` and containerized workflow skill |
 | 2026-05-15 | Synthesize unique post dates (May 1–12) for correct blog series ordering |
