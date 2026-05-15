@@ -1,0 +1,3 @@
+# Local env files that may contain secrets
+.env
+*.env.local
