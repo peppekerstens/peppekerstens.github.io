@@ -5,39 +5,34 @@ description: Use ONLY when performing Jekyll operations (build, serve, bundle) o
 
 # Containerized Jekyll Workflow
 
-This repository prefers **podman** for all Jekyll operations. Docker Hub (`docker.io`) is often unreachable from this build environment — always use `ghcr.io` as fallback.
+This repository prefers **podman** for all Jekyll operations. Never install Ruby/gems directly on the host.
 
-## Generating / Updating Gemfile.lock
+The authoritative copy-paste recipes live in `.opencode/rules/containerized-tooling.md` (auto-loaded by opencode when working with Gemfile/Bundler/Jekyll files).
 
-```bash
-podman run --rm -v "$PWD:/site:Z" -w /site \
-  docker.io/library/ruby:3.4-slim \
-  bash -c "bundle lock && bundle install"
-```
+## Quick reference
 
-If Docker Hub is unreachable, use `ghcr.io/catthehacker/ubuntu:act-latest` and install Ruby manually:
+| Task | Image | Command |
+|------|-------|---------|
+| `bundle lock` | `ghcr.io/ruby/ruby:3.2.1-jammy` | `podman run --rm --authfile ~/.config/containers/auth.json -v "$PWD:/site:Z" -w /site ghcr.io/ruby/ruby:3.2.1-jammy bash -c "gem install bundler && bundle lock"` |
+| `bundle install` | same | same but `bundle install` |
+| `jekyll build` | same | same but `bundle install && bundle exec jekyll build` |
 
-```bash
-podman run --rm -v "$PWD:/site:Z" -w /site \
-  ghcr.io/catthehacker/ubuntu:act-latest \
-  bash -c "apt-get update -qq && apt-get install -y -qq ruby bundler && bundle lock"
-```
+## Registry order
 
-## Building the site
+1. **ghcr.io** (`ghcr.io/ruby/ruby:3.2.1-jammy`) — requires auth file at `~/.config/containers/auth.json`
+2. **docker.io** (`docker.io/library/ruby:3.4-slim`) — fallback, may have TLS issues
 
-```bash
-podman run --rm -v "$PWD:/site:Z" -w /site \
-  docker.io/library/ruby:3.4-slim \
-  bash -c "bundle install && bundle exec jekyll build"
-```
-
-## Local dev server
+## Auth setup
 
 ```bash
-podman run --rm -v "$PWD:/site:Z" -w /site -p 4000:4000 \
-  docker.io/library/ruby:3.4-slim \
-  bash -c "bundle install && bundle exec jekyll serve --host 0.0.0.0"
+# Check if auth exists:
+ls ~/.config/containers/auth.json
+
+# ~/.config/containers/auth.json format:
+# {"auths":{"ghcr.io":{"auth":"<base64(username:token)>"}}}
 ```
+
+If missing, generate a GitHub PAT with `read:packages` scope at https://github.com/settings/tokens and write it to the auth file.
 
 ## Registry Mirrors
 

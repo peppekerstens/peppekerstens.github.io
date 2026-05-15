@@ -43,30 +43,34 @@ The repo had ~11,800 lines of local copies of Minimal Mistakes layouts, includes
 
 Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 
-**Approach preference:** containerized (podman). Docker Hub is unreachable from this machine (TLS timeout); `ghcr.io` works with auth but Ruby/Jekyll images aren't readily available there.
+**Approach preference:** containerized (podman). Docker Hub may have TLS issues; `ghcr.io` works with auth.
 
 **Done:**
 - [x] Generate `Gemfile.lock` using brew-installed Ruby as a one-time bootstrap (pragmatic workaround)
 - [x] Remove `Gemfile.lock` from `.gitignore` so it is tracked
-- [x] Write `Containerfile` — portable Docker/podman build for future use
-- [x] Write `.opencode/skills/containerized-jekyll/SKILL.md` — documents containerized workflow with podman, registry fallbacks, and mirror config
+- [x] Write `Containerfile` — portable Docker/podman build definition
+- [x] Write `.opencode/rules/containerized-tooling.md` — **auto-loaded opencode rule** with exact tested podman recipes (primary: `ghcr.io/ruby/ruby:3.2.1-jammy`, fallback: `docker.io/library/ruby:3.4-slim`)
+- [x] Write `.opencode/skills/containerized-jekyll/SKILL.md` — higher-level skill documentation referencing the rule for authoritative commands
+- [x] Identify available ghcr.io Ruby images (`ghcr.io/ruby/ruby:3.2.1-jammy` confirmed available via API)
+- [x] Confirm ghcr.io auth works (curl returns 200 with auth token)
+- [x] Confirm Docker Hub reachable (returns 401 — no TLS timeout on retry; earlier failure was transient)
 
 ## Constraints
 
 | Constraint | Detail |
 |------------|--------|
-| No Ruby/Bundler installed natively | Only available via brew one-time; don't rely on it |
-| Docker Hub unreachable | TLS handshake timeout — use ghcr.io or mirrors |
-| ghcr.io auth required | Auth file at `~/.config/containers/auth.json`; `podman login` fails (no tty) |
-| Browser can reach registries | Firefox on same machine can pull images — but not helpful for CLI |
-| GITHUB_TOKEN available | ghp token set in ~/.bashrc; works for API and git push |
+| No Ruby/Bundler permanently installed natively | One-time brew bootstrap works; don't rely on it |
+| Docker Hub | Reachable (returns 401 on retry); earlier TLS timeout was transient |
+| ghcr.io | Works with auth file at `~/.config/containers/auth.json`; `podman login` fails (no tty) |
+| `GITHUB_TOKEN` available | ghp token in `~/.bashrc`; works for API and git push |
 | podman version | 5.7.0 |
 
 ## Key Decisions
 
 - `Gemfile.lock` is committed (not gitignored). Without it, GitHub Actions rebuilds from scratch each time with potentially different dependency resolutions.
 - Remote theme is preferred over local overrides. Keeps the repo small and automatically gets theme fixes.
-- Containerized workflow is the documented standard (skill file). If a registry is available, use `podman run`; if not, brew is the escape hatch.
+- Containerized workflow is mandatory — enforced by `.opencode/rules/containerized-tooling.md` (auto-loaded by opencode whenever Gemfile/Bundler/Jekyll files are involved).
+- The **rule file** (not the skill) is the authoritative source for copy-paste podman commands. The skill is the higher-level overview.
 
 ## Relevant Files
 
@@ -77,6 +81,7 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 | `Gemfile.lock` | Locked dependency tree for reproducible builds |
 | `Containerfile` | Docker/podman build definition |
 | `.opencode/opencode.json` | GitHub MCP server config |
-| `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow documentation |
+| `.opencode/rules/containerized-tooling.md` | **Auto-loaded rule** — enforces podman-first workflow with tested recipes |
+| `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow overview (skill) |
 | `.gitignore` | Minimal Jekyll-focused ignore rules |
 | `plan.md` | This file — development plan and progress |
