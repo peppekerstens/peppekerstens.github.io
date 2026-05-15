@@ -1,31 +1,43 @@
 ---
 date: 2026-05-15
-title: Testing the native layer - Linux Command Wrapping Part 19
+title: Testing the native layer — Linux Command Wrapping Part 19
 toc: true
 ---
 
-A `dotnet build` compiles the code. It produces a DLL. But when you try
-to `Import-Module` that DLL into PowerShell, you get an error about a
-missing assembly. That is because binary modules use NuGet packages —
-`Tmds.DBus.Protocol` for D-Bus, or `System.Management.Automation` itself.
+Part 18 ended with 18 NuGet packages published to GitHub Packages. A
+consumer can now install `Storage.Linux` or `NetTCPIP.Linux.Native`
+with `Install-PSResource` and start using it. The distribution
+pipeline works.
 
-`dotnet build` copies the project output. It does not copy transitive
-NuGet dependencies for library projects. `dotnet publish` does.
+But this project does not end with distribution. The whole point of
+Stage 6 was to write C# binary modules that could eventually land in
+the PowerShell source tree. Four native modules exist now —
+`LocalAccounts.Linux.Native`, `ScheduledTasks.Linux.Native`,
+`NetTCPIP.Linux.Native`, and `Services.Linux.Native`. They pass
+code review. They build green across five distros.
 
-That distinction took me an afternoon to figure out the first time. This
-post covers both ways to test the native modules: the fast way (WSL,
-one command) and the thorough way (Docker, all five distros).
+The question this post answers is: how do you test one of these
+modules before the NuGet package exists, when you are still
+iterating on code?
+
+Script modules are easy to test — they are `.psm1` files.
+`Import-Module ./Module.psm1` works anywhere. Binary modules need
+a build step. And not just `dotnet build` — that produces a bare DLL
+that PowerShell cannot resolve because the NuGet dependencies live
+in NuGet caches, not next to the output.
+
+This is the workflow I settled on after burning an afternoon on that
+exact `dotnet build` vs `dotnet publish` distinction.
 
 ## Before you start
 
 You need three things on your machine:
 
-- **WSL 2 (Windows Subsystem for Linux)** — `wsl --install` in an admin
-  PowerShell prompt enables it. Restart when prompted, then set up a
-  username and password in the Ubuntu window that opens.
+- **WSL 2** — `wsl --install` in an admin PowerShell prompt. Restart,
+  set up a username and password.
 - **.NET 8 SDK** — install the Windows version from the official site,
   and inside WSL: `sudo apt update && sudo apt install -y dotnet-sdk-8.0`.
-- **PowerShell 7.4+ inside WSL** — inside your WSL terminal:
+- **PowerShell 7.4+ inside WSL**:
 
 {% raw %}```powershell
 wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
@@ -33,8 +45,7 @@ sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update && sudo apt install -y powershell
 ```{% endraw %}
 
-After these three steps, `pwsh` launches PowerShell inside WSL. Test it
-by running `pwsh -c '1+1'`.
+After these three steps, `pwsh` launches PowerShell inside WSL.
 
 ## Workflow A: Interactive container (recommended)
 
@@ -55,7 +66,7 @@ Import-Module /module/bin/Release/net8.0/Services.Linux.Native.dll
 Get-Service
 ```
 
-The docker-compose file defines five distros. Swap `ubuntu-24` for
+The Compose file defines five distros. Swap `ubuntu-24` for
 `debian-12`, `fedora-40`, `opensuse-tumbleweed`, or `arch`.
 
 ## Workflow B: Bare WSL (fastest for small edits)
@@ -74,8 +85,8 @@ Get-Service
 ```
 
 `dotnet publish` copies everything — the DLL, the NuGet dependencies,
-the runtime configuration. Without `--output`, `dotnet build` produces a
-bare DLL that PowerShell cannot resolve.
+the runtime config. Without `--output`, `dotnet build` produces a bare
+DLL that PowerShell cannot resolve.
 
 If you run into `Tmds.DBus.Protocol` load errors, check that you used
 `publish`, not `build`. That is the most common mistake.
@@ -104,11 +115,21 @@ The `-WhatIf` tests now pass without a D-Bus socket — the cmdlets
 resolve unit names before touching the system bus. That was the last
 design issue before the upstream contribution.
 
-## What is next
+## Summary: what to skip
 
-All nine cmdlets are ported to the fork's `ServiceUnix.cs`. The D-Bus
-refactor — name resolution before connection — is applied in both the
-standalone module and the fork. The remaining work is Pester tests for
-the new `New-Service` and `Remove-Service` cmdlets in the fork, a
-rebase on the latest upstream master, and the upstream PR to
-`PowerShell/PowerShell`.
+| Current setup | Skip setup? | Recommended workflow |
+|---|---|---|
+| Fresh Windows install | No | Setup, then Workflow A or B |
+| Has WSL and .NET SDK | Partially | Workflow B |
+| Has Docker Desktop | Yes | Workflow A |
+
+## Where this fits
+
+Parts 1 through 13 built the PowerShell script modules. Part 14 added
+the 5-distro test matrix. Parts 15-17 delivered the C# native modules.
+Part 18 published everything to a NuGet feed.
+
+This part closes the loop for the contributor who clones one of the
+native repos and wants to verify the build. The next part picks up
+the upstream contribution story — rebasing the fork, signing the CLA,
+filing the RFC, and submitting the PR to `PowerShell/PowerShell`.
