@@ -1,6 +1,6 @@
 ---
-date: 2026-05-15
-title: Testing the native layer — Linux Command Wrapping Part 19
+date: 2026-05-15 10:00:00 -0000
+title: testing the native layer — linux command wrapping part 19
 toc: true
 ---
 

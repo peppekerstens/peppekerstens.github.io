@@ -55,6 +55,17 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 - [x] Confirm ghcr.io auth works (curl returns 200 with auth token)
 - [x] Confirm Docker Hub reachable (returns 401 — no TLS timeout on retry; earlier failure was transient)
 
+### Phase 6 — Enforce blog creation rules
+
+Two hard requirements for all blog posts. Non-negotiable.
+
+**Done:**
+- [x] Write `.opencode/rules/blog-creation.md` — **auto-loaded rule** for `_posts/*` files
+- [x] Rule 1: Date synthesis — every post MUST have a unique date; same-day posts get synthesized dates
+- [x] Rule 2: Tone calibration — part-1 through part-12 in `_posts/` MUST be read before drafting any new post
+- [x] Update `.opencode/commands/blog.md` to reference the hard requirements rule
+- [x] Copy `.opencode/skills/writing-style/SKILL.md` from opencode repo
+
 ## Constraints
 
 | Constraint | Detail |
@@ -64,6 +75,8 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 | ghcr.io | Works with auth file at `~/.config/containers/auth.json`; `podman login` fails (no tty) |
 | `GITHUB_TOKEN` available | ghp token in `~/.bashrc`; works for API and git push |
 | podman version | 5.7.0 |
+| Blog date uniqueness | Every post MUST have a unique date — enforced by `.opencode/rules/blog-creation.md` |
+| Blog tone calibration | Part-1 through part-12 MUST be read before drafting — enforced by `.opencode/rules/blog-creation.md` |
 
 ## Key Decisions
 
@@ -71,6 +84,7 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 - Remote theme is preferred over local overrides. Keeps the repo small and automatically gets theme fixes.
 - Containerized workflow is mandatory — enforced by `.opencode/rules/containerized-tooling.md` (auto-loaded by opencode whenever Gemfile/Bundler/Jekyll files are involved).
 - The **rule file** (not the skill) is the authoritative source for copy-paste podman commands. The skill is the higher-level overview.
+- Blog creation rules are hard requirements — enforced by `.opencode/rules/blog-creation.md` (auto-loaded for all `_posts/*` files).
 
 ## Relevant Files
 
@@ -82,6 +96,9 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 | `Containerfile` | Docker/podman build definition |
 | `.opencode/opencode.json` | GitHub MCP server config |
 | `.opencode/rules/containerized-tooling.md` | **Auto-loaded rule** — enforces podman-first workflow with tested recipes |
+| `.opencode/rules/blog-creation.md` | **Auto-loaded rule** — enforces date synthesis and tone calibration for blog posts |
+| `.opencode/commands/blog.md` | `/blog` command — references blog creation rule and writing-style skill |
 | `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow overview — references rule for recipes |
+| `.opencode/skills/writing-style/SKILL.md` | Personal writing conventions — copied from opencode repo |
 | `.gitignore` | Minimal Jekyll-focused ignore rules |
 | `plan.md` | This file — development plan and progress |
