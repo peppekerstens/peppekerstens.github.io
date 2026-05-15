@@ -4,7 +4,7 @@ title: Building twelve modules - Linux Command Wrapping Part 8
 toc: true
 ---
 
-This is the technical post. Twelve modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-08-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
+This is the technical post. Twelve modules, all the patterns, all the gotchas. If you want the meta-story about AI-assisted development and why I am doing this at all, that is [part 7]({% post_url 2026-05-01-ai-assisted-linux-command-wrapping-part-7 %}). This post is about what we built and what we learned building it.
 
 The modules, current as of this writing:
 
@@ -123,7 +123,7 @@ $PSCmdlet.ThrowTerminatingError($er)
 
 ### `IDisposable` in `try/finally`
 
-Any .NET object implementing `IDisposable` (X509Store, X509Chain, RSA key, stream) is opened inside a `try` block and disposed in the `finally` block — unconditionally, whether the body threw or not. This was audited in session 17 ([part 10]({% post_url 2026-05-08-reading-the-manual-linux-command-wrapping-part-10 %})) and applied consistently from PKI.Linux onwards.
+Any .NET object implementing `IDisposable` (X509Store, X509Chain, RSA key, stream) is opened inside a `try` block and disposed in the `finally` block — unconditionally, whether the body threw or not. This was audited in session 17 ([part 10]({% post_url 2026-05-04-reading-the-manual-linux-command-wrapping-part-10 %})) and applied consistently from PKI.Linux onwards.
 
 ---
 
@@ -273,7 +273,7 @@ Tasks go to `/etc/systemd/system/` (system scope, requires root) or `~/.config/s
 
 ### IDisposable audit
 
-After the initial implementation, a review against the PowerShell SDK development guidelines found that `X509Chain`, `X509Store`, `RSA`, and `ECDsa` objects were being created but never disposed. These implement `IDisposable` and hold cryptographic memory that should be released deterministically. All were wrapped in `try/finally { .Dispose() }`. The detailed write-up is in [part 10]({% post_url 2026-05-08-reading-the-manual-linux-command-wrapping-part-10 %}).
+After the initial implementation, a review against the PowerShell SDK development guidelines found that `X509Chain`, `X509Store`, `RSA`, and `ECDsa` objects were being created but never disposed. These implement `IDisposable` and hold cryptographic memory that should be released deterministically. All were wrapped in `try/finally { .Dispose() }`. The detailed write-up is in [part 10]({% post_url 2026-05-04-reading-the-manual-linux-command-wrapping-part-10 %}).
 
 ### Partial implementation model
 
