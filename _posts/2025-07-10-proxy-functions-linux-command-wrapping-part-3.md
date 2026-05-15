@@ -1,5 +1,5 @@
 ---
-date: 2025-07-10  -0000
+date: 2025-07-10
 title: Proxy Functions - Linux Command Wrapping Part 3
 toc: true
 ---
@@ -458,6 +458,7 @@ A few hours burned and very little to show. This made me rethink about using pro
 * For stuf to work on Linux, it is not absolutally needed
 
 That's it for now.
+
 
 
 

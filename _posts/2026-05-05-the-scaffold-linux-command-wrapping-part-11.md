@@ -1,5 +1,5 @@
 ---
-date: 2026-05-08  -0000
+date: 2026-05-05
 title: The scaffold — Linux Command Wrapping Part 11
 toc: true
 ---
@@ -104,6 +104,7 @@ What comes next is the part that cannot be automated: real usage, real environme
 ---
 
 All twelve module repositories are at [github.com/peppekerstens](https://github.com/peppekerstens). Pull requests, bug reports, and reports of edge cases that break things are more welcome than stars.
+
 
 
 

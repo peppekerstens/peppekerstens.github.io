@@ -1,5 +1,5 @@
 ---
-date: 2026-05-09  -0000
+date: 2026-05-09
 title: Going native — Linux Command Wrapping Part 15
 toc: true
 ---
@@ -139,6 +139,7 @@ The GHA matrix runs are queued across all three repos. The most likely point of 
 If the matrix comes back green — or green with expected skips — the next step is the RFC question. What it takes to upstream any of these three modules to PS7, and whether now is the right time to start that conversation.
 
 That is a bigger question than a test expansion. We will get to it.
+
 
 
 

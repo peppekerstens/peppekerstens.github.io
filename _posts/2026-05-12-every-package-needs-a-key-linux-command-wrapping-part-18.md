@@ -1,5 +1,5 @@
 ---
-date: 2026-05-15  -0000
+date: 2026-05-12
 title: Every Package Needs a Key — Linux Command Wrapping Part 18
 toc: true
 ---
@@ -254,6 +254,7 @@ Commit and push. Tag all 18 repos. Wait for 18 GHA runs to turn
 green. Then the distribution pipeline is complete — from tag to
 `Install-PSResource` in under five minutes, on any machine that
 has a vault and a key.
+
 
 
 
