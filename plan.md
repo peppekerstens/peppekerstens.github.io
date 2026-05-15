@@ -82,6 +82,6 @@ Builds need `Gemfile.lock` committed. Generating it requires Ruby + Bundler.
 | `Containerfile` | Docker/podman build definition |
 | `.opencode/opencode.json` | GitHub MCP server config |
 | `.opencode/rules/containerized-tooling.md` | **Auto-loaded rule** — enforces podman-first workflow with tested recipes |
-| `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow overview (skill) |
+| `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow overview — references rule for recipes |
 | `.gitignore` | Minimal Jekyll-focused ignore rules |
 | `plan.md` | This file — development plan and progress |

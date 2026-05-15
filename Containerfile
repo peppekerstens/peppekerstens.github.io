@@ -1,4 +1,4 @@
-FROM ruby:3.4-slim
+FROM ghcr.io/ruby/ruby:3.2.1-jammy
 
 WORKDIR /site
 
@@ -7,7 +7,7 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle lock --update && bundle install
+RUN gem install bundler && bundle lock --update && bundle install
 
 COPY . .
 
