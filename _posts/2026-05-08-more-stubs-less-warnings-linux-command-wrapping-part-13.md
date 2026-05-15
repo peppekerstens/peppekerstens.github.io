@@ -1,4 +1,5 @@
 ---
+date: 2026-05-08 T -0000
 title: More stubs, less warnings - Linux Command Wrapping Part 13
 toc: true
 ---
@@ -87,3 +88,5 @@ That is the motivation for Stage 4: a proper multi-distro test matrix. GitHub Ac
 Stage 4. Infrastructure. Dockerfiles. CI workflows. Container images at `ghcr.io/peppekerstens/`. One per distro, each with PowerShell and Pester pre-installed and the relevant Linux tools actually present. Then `.github/workflows/pester.yml` in each module repo, running the full test suite against the matrix.
 
 The goal: every module tested on five distros on every push. Any skip that fires because a tool is missing from the container is a gap to fill, not a condition to accept.
+
+

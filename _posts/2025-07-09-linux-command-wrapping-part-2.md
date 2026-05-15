@@ -1,4 +1,5 @@
 ---
+date: 2025-07-09 T -0000
 title: Prepping environment - Linux Command Wrapping Part 2
 toc: true
 ---
@@ -184,3 +185,5 @@ Script     2.3.6                 PSReadLine                          Desk      {
 Binary     2.0.3                 ThreadJob                           Desk      Start-ThreadJob
 
 ```
+
+

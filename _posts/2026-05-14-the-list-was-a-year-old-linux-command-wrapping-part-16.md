@@ -1,4 +1,5 @@
 ---
+date: 2026-05-14 T -0000
 title: The list was a year old — Linux Command Wrapping Part 16
 toc: true
 ---
@@ -91,3 +92,5 @@ The comparison script stays at the repo root. I can re-run it against any future
 ```
 
 Stage 5 delivered less than I hoped but more than I expected. Evgenij's list is validated. Two cmdlets that should not have been there are identified for removal. And the script works.
+
+

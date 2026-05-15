@@ -1,4 +1,5 @@
 ---
+date: 2026-05-14 T -0000
 title: AI Reviewed Its Own Code — Linux Command Wrapping Part 17
 toc: true
 ---
@@ -123,3 +124,5 @@ The code review experiment was supposed to be a quick detour before wrapping up 
 - **GitHub auth trick.** `gh auth login` needs `read:org` scope. The PAT in the Windows Credential Manager does not have it. One-liner workaround: `git credential fill` extracts the PAT, set `$env:GH_TOKEN`, and `gh` works. No interactive login. Saved in AGENTS.md so every future session just works.
 
 - **Code review as CI pre-filter.** Not a replacement for build or tests. Build catches syntax. Tests catch output. Code review catches the structural issues between them. That is the right niche.
+
+

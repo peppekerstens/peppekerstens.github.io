@@ -1,4 +1,5 @@
 ---
+date: 2026-05-08 T -0000
 title: The distro problem, .NET to the rescue — Linux Command Wrapping Part 9
 toc: true
 ---
@@ -132,3 +133,5 @@ But for the next iteration of the networking modules, I want to at least investi
 That investigation is what comes next, alongside PrintManagement.Linux which is firmly in the CLI-wrapping camp and does not raise these questions at all.
 
 There is something slightly satisfying about a module series that ends up questioning one of its own founding assumptions halfway through. It means something was learned along the way.
+
+

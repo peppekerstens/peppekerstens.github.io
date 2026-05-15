@@ -1,4 +1,5 @@
 ---
+date: 2026-05-08 T -0000
 title: Letting AI do the heavy lifting - Linux Command Wrapping Part 7
 toc: true
 ---
@@ -107,3 +108,5 @@ Writing in my voice. That is presumably obvious from reading this post versus th
 Part 8 covers all seven module implementations in one go: Storage, Management, NetTCPIP, Update, Security, LocalAccounts, and ScheduledTasks. Rather than a separate post per module — which would have been six more posts of decreasing novelty — I collapsed them into one technical deep-dive covering the cross-cutting patterns that apply to every module, and then the per-module highlights where something interesting happened.
 
 The short version: seven modules, roughly 250 cmdlets total across them, all tested on WSL2, all public on GitHub. The slightly longer version is in part 8.
+
+

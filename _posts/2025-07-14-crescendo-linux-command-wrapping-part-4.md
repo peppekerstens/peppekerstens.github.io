@@ -1,4 +1,5 @@
 ---
+date: 2025-07-14 T -0000
 title: Crescendo - Linux Command Wrapping Part 4
 toc: true
 ---
@@ -300,3 +301,5 @@ Getting my first command line wrapped by using Crescendo actually took me quite 
 At this point, I'm on the fence on wether Crescendo will actually accelerate the command wrapping effort. For now, i'll keep using it as long as not to many other quirks pop-up.
 
 At this point, I have not even started on the Get-Disk function. That's fine. I'll pick up on this in a next part somewhere...
+
+
