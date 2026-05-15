@@ -1,5 +1,5 @@
 ---
-date: 2026-05-08 T -0000
+date: 2026-05-08  -0000
 title: Building twelve modules - Linux Command Wrapping Part 8
 toc: true
 ---
@@ -635,5 +635,6 @@ These were suppressed by adding a `PSScriptAnalyzerSettings.psd1` at the root of
 The `run-pssa.ps1` runner was updated to pass `-Settings` per module, and to filter results from `Helpers\` and `Crescendo\` directories (scratch/generated files that are not part of the module surface).
 
 **Final result:** Error=0, Warning=0 across all 12 modules. 0 test regressions (204 pass, 1309 skip on Windows; 1513 total unchanged).
+
 
 

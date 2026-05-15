@@ -1,5 +1,5 @@
 ---
-date: 2025-07-06 T -0000
+date: 2025-07-06  -0000
 title: Linux Command Wrapping Part 1
 toc: true
 ---
@@ -93,4 +93,5 @@ So the question is; is anyone actually interested getting PowerShell stuff worki
 ## Next
 
 Next post will detail more on prepping for the approach set out above.
+
 

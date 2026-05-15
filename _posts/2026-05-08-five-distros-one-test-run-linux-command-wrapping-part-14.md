@@ -1,5 +1,5 @@
 ---
-date: 2026-05-08 T -0000
+date: 2026-05-08  -0000
 title: Five distros, one test run - Linux Command Wrapping Part 14
 toc: true
 ---
@@ -178,5 +178,6 @@ Stage 5 is a different kind of work. The question is whether to port selected cm
 That is a longer conversation. It involves RFCs, CLAs, and code review by the PowerShell team. It also involves admitting that "looks correct in PowerShell" is not the same as "correct enough for a production OS-level cmdlet." Stage 5 is going to be more deliberate than the previous stages.
 
 But that is for the next post.
+
 
 

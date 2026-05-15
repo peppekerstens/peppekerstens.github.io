@@ -1,5 +1,5 @@
 ---
-date: 2026-05-08 T -0000
+date: 2026-05-08  -0000
 title: Crescendo revisited - Linux Command Wrapping Part 12
 toc: true
 ---
@@ -175,5 +175,6 @@ None of those are radical departures from what has been built already. They are 
 There are also two new modules on the list: `SmbShare.Linux` and `PackageManagement.Linux`. Both need new repos, new scaffolding, new decisions about what is in scope.
 
 Onwards.
+
 
 

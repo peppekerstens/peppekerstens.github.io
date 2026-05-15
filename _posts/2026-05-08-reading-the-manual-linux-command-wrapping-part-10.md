@@ -1,5 +1,5 @@
 ---
-date: 2026-05-08 T -0000
+date: 2026-05-08  -0000
 title: Reading the manual, properly — Linux Command Wrapping Part 10
 toc: true
 ---
@@ -140,5 +140,6 @@ I am not going back to fix all of them now. But this review has produced a clean
 The other thing it produced is a clearer sense of which references to consult and what each one is for. The required guidelines tell you what the contract is. The advisory guidelines tell you the preferred way to meet it. The .NET dispose docs tell you which types are dangerous to leave undisposed. The style guide catches the footguns that do not show up in formal specs. The source code confirms what the docs describe actually looks like in practice.
 
 Reading all of them takes a few hours. Not reading them apparently takes a bit longer — distributed across every script that calls your module and hits an error it cannot parse.
+
 
 

@@ -1,5 +1,5 @@
 ---
-date: 2025-07-16 T -0000
+date: 2025-07-16  -0000
 title: Show Command - Linux Command Wrapping Part 6
 toc: true
 ---
@@ -325,6 +325,7 @@ if ($run -eq 'y') {
     Invoke-Expression $finalCommand
 }
 ```
+
 
 
 
