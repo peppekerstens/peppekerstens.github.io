@@ -1,7 +1,9 @@
 ---
 date: 2026-05-07
-title: More stubs, less warnings - Linux Command Wrapping Part 13
+title: More stubs, less warnings - PowerShell Linux Commands Part 13
 toc: true
+redirect_from:
+  - /more-stubs-less-warnings-linux-command-wrapping-part-13/
 ---
 
 Part 12 ended with a to-do list. Stage 3 was going to be the "implement the remaining stubs" stage - turn those `Write-Warning "not yet implemented"` placeholders into something that actually runs. It also included two new modules from scratch: `SmbShare.Linux` and `PackageManagement.Linux`.

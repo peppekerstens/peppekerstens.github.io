@@ -1,7 +1,9 @@
 ---
 date: 2026-05-01
-title: Letting AI do the heavy lifting - Linux Command Wrapping Part 7
+title: Letting AI do the heavy lifting - PowerShell Linux Commands Part 7
 toc: true
+redirect_from:
+  - /ai-assisted-linux-command-wrapping-part-7/
 ---
 
 So. It has been a while.

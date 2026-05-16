@@ -1,7 +1,9 @@
 ---
 date: 2025-07-09
-title: Prepping environment - Linux Command Wrapping Part 2
+title: Prepping environment - PowerShell Linux Commands Part 2
 toc: true
+redirect_from:
+  - /linux-command-wrapping-part-2/
 ---
 
 Before we get into the nitty gritty of figuring stuff out, we need to set things up. This article describes our baseline.

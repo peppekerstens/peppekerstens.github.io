@@ -1,7 +1,9 @@
 ---
 date: 2026-05-11
-title: AI Reviewed Its Own Code — Linux Command Wrapping Part 17
+title: AI Reviewed Its Own Code — PowerShell Linux Commands Part 17
 toc: true
+redirect_from:
+  - /ai-reviewed-its-own-code-linux-command-wrapping-part-17/
 ---
 
 Part 16 ended with a conclusion. Stage 5 done (the list is still accurate, go figure), back to Stage 6. The C# binary modules are built, the GHA matrix is green, the code review is mostly resolved. Time to wrap up and talk about upstream PRs and RFCs.

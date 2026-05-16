@@ -1,7 +1,9 @@
 ---
 date: 2026-05-12
-title: Every Package Needs a Key — Linux Command Wrapping Part 18
+title: Every Package Needs a Key — PowerShell Linux Commands Part 18
 toc: true
+redirect_from:
+  - /every-package-needs-a-key-linux-command-wrapping-part-18/
 ---
 
 Stage 7 shipped. Eighteen modules are now published as NuGet packages to

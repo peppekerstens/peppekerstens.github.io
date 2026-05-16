@@ -1,7 +1,9 @@
 ---
 date: 2026-05-09
-title: Going native — Linux Command Wrapping Part 15
+title: Going native — PowerShell Linux Commands Part 15
 toc: true
+redirect_from:
+  - /going-native-linux-command-wrapping-part-15/
 ---
 
 Part 14 ended on a deliberately vague note. Stage 5 was described as "a longer conversation" involving RFCs, CLAs, and code review by the PowerShell team. That was honest at the time. It turned out Stage 5 produced something more concrete and more immediate than I expected.

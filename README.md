@@ -6,6 +6,9 @@ Personal blog at [peppekerstens.github.io](https://peppekerstens.github.io) — 
 
 | Date | Change |
 |------|--------|
+| 2026-05-16 | Rename blog series from "Linux Command Wrapping" to "PowerShell Linux Commands" — 20 posts renamed, titles updated, `redirect_from` added for old URLs, `/blog` command updated |
+| 2026-05-16 | Add `.opencode/TOOLS.md` — comprehensive reference of all available tools and capabilities for faster session discovery |
+| 2026-05-16 | Add `.opencode/rules/working-principles.md` — auto-loaded rule: work via opencode, defer to subtasks to overcome looping |
 | 2026-05-15 | Fix stale `post_url` references in Part 8 after post re-dating (Part 7: `2026-05-08`→`2026-05-01`, Part 10: `2026-05-08`→`2026-05-04`) |
 | 2026-05-15 | Remove 11,800+ lines of stale local theme overrides (`_layouts/`, `_includes/`, `_sass/minimal-mistakes/`) — theme now provides these fresh |
 | 2026-05-15 | Add opencode config with GitHub MCP server for API access |

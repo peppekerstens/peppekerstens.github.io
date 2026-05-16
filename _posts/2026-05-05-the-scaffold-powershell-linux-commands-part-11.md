@@ -1,7 +1,9 @@
 ---
 date: 2026-05-05
-title: The scaffold — Linux Command Wrapping Part 11
+title: The scaffold — PowerShell Linux Commands Part 11
 toc: true
+redirect_from:
+  - /the-scaffold-linux-command-wrapping-part-11/
 ---
 
 Today was productive by almost any measure you care to apply. Twelve modules. Hundreds of cmdlets. A full PSScriptAnalyzer pass. Zero test failures across 1513 tests. Clean repos, pushed, documented.

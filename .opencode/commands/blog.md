@@ -13,12 +13,12 @@ The rule `.opencode/rules/blog-creation.md` is auto-loaded for all `_posts/*` fi
 
 ## Post requirements
 
-- Series: "Linux Command Wrapping" — the next part number is the current count + 1
-- Filename: `YYYY-MM-DD-<slug>-linux-command-wrapping-part-N.md` using today's date. If multiple posts are created on the same day, synthesize a date increase (different days) to ensure correct chronological display.
+- Series: "PowerShell Linux Commands" — the next part number is the current count + 1
+- Filename: `YYYY-MM-DD-<slug>-powershell-linux-commands-part-N.md` using today's date. If multiple posts are created on the same day, synthesize a date increase (different days) to ensure correct chronological display.
 - Frontmatter:
   ```yaml
   ---
-  title: <Title — sentence case, no trailing period> — Linux Command Wrapping Part N
+  title: <Title — sentence case, no trailing period> — PowerShell Linux Commands Part N
   toc: true
   ---
   ```

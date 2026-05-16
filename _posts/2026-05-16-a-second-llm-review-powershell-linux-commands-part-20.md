@@ -1,7 +1,9 @@
 ---
 date: 2026-05-16 10:00:00 -0000
-title: a second llm review — linux command wrapping part 20
+title: a second llm review — powershell linux commands part 20
 toc: true
+redirect_from:
+  - /a-second-llm-review-linux-command-wrapping-part-20/
 ---
 
 I thought the code review for the native modules was finished. Twenty-one issues had been identified, twenty were resolved, and the namespace style inconsistency was deferred as a minor cosmetic detail. The builds were green. The Pester matrix was green. It felt like the "done" definition had been met.

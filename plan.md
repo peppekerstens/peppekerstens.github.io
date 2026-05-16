@@ -9,7 +9,7 @@ Stabilize this Jekyll blog (Minimal Mistakes theme, GitHub Pages), fix build fai
 GitHub Actions build was failing. Root cause: a post was re-dated, breaking `{% post_url %}` cross-references in later posts that referenced the old date.
 
 **Done:**
-- [x] Fix stale `post_url` refs in `2026-05-02-building-the-modules-linux-command-wrapping-part-8.md` (Part 7: `2026-05-08`→`2026-05-01`, Part 10: `2026-05-08`→`2026-05-04`)
+- [x] Fix stale `post_url` refs in `2026-05-02-building-the-modules-powershell-linux-commands-part-8.md` (Part 7: `2026-05-08`→`2026-05-01`, Part 10: `2026-05-08`→`2026-05-04`)
 - [x] Synthesize unique dates for all posts (May 1–12) so GitHb Pages sorts them correctly
 - [x] Verify site builds cleanly with `bundle exec jekyll build`
 
@@ -66,6 +66,20 @@ Two hard requirements for all blog posts. Non-negotiable.
 - [x] Update `.opencode/commands/blog.md` to reference the hard requirements rule
 - [x] Copy `.opencode/skills/writing-style/SKILL.md` from opencode repo
 
+### Phase 7 — Rename blog series to reflect project evolution
+
+The series was uniformly titled "Linux Command Wrapping" across all 20 parts, but the project shifted from CLI wrapping (Parts 1–6) to module engineering (Parts 7–13) to native C# and upstream contribution (Parts 14–20). The old name no longer describes what the posts are about.
+
+**Done:**
+- [x] Rename all 20 filenames: `linux-command-wrapping` → `powershell-linux-commands`
+- [x] Update all 20 frontmatter titles
+- [x] Update internal `{% post_url %}` cross-references (3 in Part 8)
+- [x] Update markdown link in Part 5 (absolute URL to Part 3)
+- [x] Add `redirect_from` frontmatter to all 20 posts for old URL preservation
+- [x] Update `.opencode/commands/blog.md` — series name, filename pattern, frontmatter template
+- [x] Remove stale `_drafts/linux command/` directory (3 superseded drafts)
+- [x] Update `plan.md` references to renamed filenames
+
 ## Constraints
 
 | Constraint | Detail |
@@ -100,5 +114,7 @@ Two hard requirements for all blog posts. Non-negotiable.
 | `.opencode/commands/blog.md` | `/blog` command — references blog creation rule and writing-style skill |
 | `.opencode/skills/containerized-jekyll/SKILL.md` | Containerized workflow overview — references rule for recipes |
 | `.opencode/skills/writing-style/SKILL.md` | Personal writing conventions — copied from opencode repo |
+| `.opencode/TOOLS.md` | Comprehensive reference of all available tools and capabilities |
+| `.opencode/rules/working-principles.md` | **Auto-loaded rule** — work via opencode, defer to subtasks to overcome looping |
 | `.gitignore` | Minimal Jekyll-focused ignore rules |
 | `plan.md` | This file — development plan and progress |

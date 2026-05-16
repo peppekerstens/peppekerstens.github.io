@@ -1,7 +1,9 @@
 ---
 date: 2025-07-16
-title: Show Command - Linux Command Wrapping Part 6
+title: Show Command - PowerShell Linux Commands Part 6
 toc: true
+redirect_from:
+  - /show-command-linux-command-wrapping-part-6/
 ---
 
 After Out-Gridview, the Show-Command seemed a logical next candidate. This provided me the oppertunity to tip-toe into Terminal User Interface (TUI) design.

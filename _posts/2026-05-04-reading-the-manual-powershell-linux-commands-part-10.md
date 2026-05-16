@@ -1,7 +1,9 @@
 ---
 date: 2026-05-04
-title: Reading the manual, properly — Linux Command Wrapping Part 10
+title: Reading the manual, properly — PowerShell Linux Commands Part 10
 toc: true
+redirect_from:
+  - /reading-the-manual-linux-command-wrapping-part-10/
 ---
 
 PKI.Linux v0.1.0 worked. The tests passed. The examples ran. I shipped it.

@@ -1,7 +1,9 @@
 ---
 date: 2026-05-15 10:00:00 -0000
-title: testing the native layer — linux command wrapping part 19
+title: testing the native layer — powershell linux commands part 19
 toc: true
+redirect_from:
+  - /testing-the-native-layer-linux-command-wrapping-part-19/
 ---
 
 Part 18 ended with 18 NuGet packages published to GitHub Packages. A

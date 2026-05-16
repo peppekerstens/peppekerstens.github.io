@@ -1,7 +1,9 @@
 ---
 date: 2025-07-10
-title: Proxy Functions - Linux Command Wrapping Part 3
+title: Proxy Functions - PowerShell Linux Commands Part 3
 toc: true
+redirect_from:
+  - /proxy-functions-linux-command-wrapping-part-3/
 ---
 
 This is a follow up article in a series on command wrapping. Proxy functions are failing on me, forcing to re-visit my approach.

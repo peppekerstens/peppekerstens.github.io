@@ -1,7 +1,9 @@
 ---
 date: 2026-05-03
-title: The distro problem, .NET to the rescue — Linux Command Wrapping Part 9
+title: The distro problem, .NET to the rescue — PowerShell Linux Commands Part 9
 toc: true
+redirect_from:
+  - /dotnet-approach-linux-command-wrapping-part-9/
 ---
 
 PKI.Linux is done. Seven cmdlets, pure .NET, no openssl CLI, pushed to GitHub. Go look at it if you want: [peppekerstens/PKI.Linux](https://github.com/peppekerstens/PKI.Linux).

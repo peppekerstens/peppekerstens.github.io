@@ -1,7 +1,9 @@
 ---
 date: 2025-07-06
-title: Linux Command Wrapping Part 1
+title: PowerShell Linux Commands Part 1
 toc: true
+redirect_from:
+  - /linux-command-wrapping-part-1/
 ---
 
 So I got myself insprired to do some PowerShell coding stuff again by watching some video's from [the European PowerShell Summit 2025](https://www.youtube.com/@PowerShellConferenceEU). This article rambles about the [Practical Linux automation with PowerShell](https://www.youtube.com/watch?v=RlzinWYIjBY) presented by Evgenij Smirnov.

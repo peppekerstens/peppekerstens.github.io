@@ -1,7 +1,9 @@
 ---
 date: 2026-05-08
-title: Five distros, one test run - Linux Command Wrapping Part 14
+title: Five distros, one test run - PowerShell Linux Commands Part 14
 toc: true
+redirect_from:
+  - /five-distros-one-test-run-linux-command-wrapping-part-14/
 ---
 
 Part 13 ended with a known gap. Fourteen modules, 0 PSSA issues, 0 test failures - all on a single Ubuntu WSL2 instance. That is fine as a development baseline but it leaves an obvious question unanswered: does any of this actually work on Fedora? On Arch? On openSUSE?

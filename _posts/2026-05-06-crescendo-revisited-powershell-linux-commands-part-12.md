@@ -1,7 +1,9 @@
 ---
 date: 2026-05-06
-title: Crescendo revisited - Linux Command Wrapping Part 12
+title: Crescendo revisited - PowerShell Linux Commands Part 12
 toc: true
+redirect_from:
+  - /crescendo-revisited-linux-command-wrapping-part-12/
 ---
 
 Part 11 ended on a note of productive discomfort: twelve modules, clean PSSA, 1513 tests passing, and an honest admission that "tests pass" is not the same as "actually works." The scaffold was up. The next question was what to do with it.

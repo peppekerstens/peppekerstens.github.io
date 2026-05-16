@@ -1,7 +1,9 @@
 ---
 date: 2026-05-10
-title: The list was a year old — Linux Command Wrapping Part 16
+title: The list was a year old — PowerShell Linux Commands Part 16
 toc: true
+redirect_from:
+  - /the-list-was-a-year-old-linux-command-wrapping-part-16/
 ---
 
 I almost skipped this stage entirely.

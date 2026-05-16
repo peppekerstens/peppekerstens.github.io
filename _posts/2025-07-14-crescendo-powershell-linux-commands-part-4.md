@@ -1,7 +1,9 @@
 ---
 date: 2025-07-14
-title: Crescendo - Linux Command Wrapping Part 4
+title: Crescendo - PowerShell Linux Commands Part 4
 toc: true
+redirect_from:
+  - /crescendo-linux-command-wrapping-part-4/
 ---
 
 This is a follow up article in a series on command wrapping. I'm rambling about Crescendo and whether I deem it to be of added value for creating PowerShell cmdlets for Linux. Although I try to make sense of what I do here whilst trying to figure stuff out, this is not meant to be an absolute beginners introduction the Crescendo.
